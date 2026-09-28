@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/typography.dart';
 import '../../../../core/constants/assets.dart';
@@ -17,8 +18,11 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
-  int _activeTabIndex = 0; // 0: OTP, 1: Password
-  final TextEditingController _phoneController = TextEditingController();
+  int _activeTabIndex = 1; // 0: OTP, 1: Password
+  final TextEditingController _phoneController =
+      TextEditingController(); // Khusus OTP
+  final TextEditingController _identityController =
+      TextEditingController(); // Khusus Email/No Telepon untuk tab Password
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
   String _countryCode = '+62';
@@ -26,6 +30,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   void dispose() {
     _phoneController.dispose();
+    _identityController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
@@ -34,7 +39,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (_activeTabIndex == 0) {
       return _phoneController.text.trim().isNotEmpty;
     } else {
-      return _phoneController.text.trim().isNotEmpty &&
+      return _identityController.text.trim().isNotEmpty &&
           _passwordController.text.isNotEmpty;
     }
   }
@@ -55,14 +60,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     setState(() => _isLoading = true);
 
     try {
-      final phone = _normalizePhoneNumber(_phoneController.text);
       final authRepo = ref.read(authRepositoryProvider);
 
       if (_activeTabIndex == 0) {
-        // Logika Login OTP
+        // Logika Login OTP (Membutuhkan Nomor Telepon Murni)
+        final phone = _normalizePhoneNumber(_phoneController.text);
         await authRepo.signInWithOtp(phone: phone);
         if (mounted) {
-          // TODO: Navigasi ke halaman input OTP (Verifikasi OTP)
+          // TODO: Navigasi ke halaman input OTP
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Kode OTP telah dikirim ke nomor Anda'),
@@ -70,9 +75,30 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           );
         }
       } else {
-        // Logika Login Password
+        // Logika Login Password (Bisa Email atau Nomor Telepon)
+        String identity = _identityController.text.trim();
+        String loginEmail = identity;
+
+        // Cek apakah inputan adalah nomor telepon (tidak mengandung '@')
+        if (!identity.contains('@')) {
+          // Normalisasi nomor telepon
+          String normalizedPhone = _normalizePhoneNumber(identity);
+
+          // Memanggil RPC di Supabase untuk mencari email berdasarkan nomor telepon
+          final response = await Supabase.instance.client.rpc(
+            'get_email_by_phone',
+            params: {'p_phone': normalizedPhone},
+          );
+
+          if (response == null) {
+            throw Exception('Nomor telepon tidak ditemukan / belum terdaftar.');
+          }
+          loginEmail = response as String;
+        }
+
+        // Login menggunakan email target dan password
         await authRepo.signInWithPassword(
-          phone: phone,
+          email: loginEmail,
           password: _passwordController.text,
         );
         if (mounted) {
@@ -167,6 +193,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     SegmentedTabControl(
                       tabs: const ['Login via OTP', 'Login Password'],
                       selectedIndex: _activeTabIndex,
+                      disabledIndices: const [
+                        0,
+                      ], // Nonaktifkan tab OTP sementara
                       onTabChanged: (index) {
                         setState(() {
                           _activeTabIndex = index;
@@ -176,25 +205,33 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     const SizedBox(height: 24),
 
                     // Input Fields
-                    PhoneInputField(
-                      controller: _phoneController,
-                      onChanged: (_) => setState(() {}),
-                      onCountryCodeChanged: (code) {
-                        setState(() {
-                          _countryCode = code;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 16),
-
-                    if (_activeTabIndex == 1) ...[
+                    if (_activeTabIndex == 0) ...[
+                      PhoneInputField(
+                        controller: _phoneController,
+                        onChanged: (_) => setState(() {}),
+                        onCountryCodeChanged: (code) {
+                          setState(() {
+                            _countryCode = code;
+                          });
+                        },
+                      ),
+                    ] else ...[
+                      CustomTextField(
+                        controller: _identityController,
+                        placeholder: 'Email atau Nomor Telepon',
+                        prefix: const Icon(
+                          Icons.person_outline,
+                          color: AppColors.textSecondary,
+                        ),
+                        onChanged: (_) => setState(() {}),
+                      ),
+                      const SizedBox(height: 16),
                       CustomTextField(
                         controller: _passwordController,
                         placeholder: 'Masukkan kata sandi',
                         isPassword: true,
                         onChanged: (_) => setState(() {}),
                       ),
-                      const SizedBox(height: 16),
                     ],
 
                     const SizedBox(height: 24),
@@ -212,7 +249,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     Center(
                       child: GestureDetector(
                         onTap: () {
-                          // context.push('/register');
+                          context.push('/register');
                         },
                         child: RichText(
                           text: TextSpan(

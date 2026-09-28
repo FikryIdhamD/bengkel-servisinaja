@@ -6,13 +6,15 @@ class SegmentedTabControl extends StatelessWidget {
   final List<String> tabs;
   final int selectedIndex;
   final ValueChanged<int> onTabChanged;
+  final List<int>? disabledIndices;
 
   const SegmentedTabControl({
-    Key? key,
+    super.key,
     required this.tabs,
     required this.selectedIndex,
     required this.onTabChanged,
-  }) : super(key: key);
+    this.disabledIndices,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +29,11 @@ class SegmentedTabControl extends StatelessWidget {
       child: Row(
         children: List.generate(tabs.length, (index) {
           final isSelected = selectedIndex == index;
+          final isDisabled = disabledIndices?.contains(index) ?? false;
+
           return Expanded(
             child: GestureDetector(
-              onTap: () => onTabChanged(index),
+              onTap: isDisabled ? null : () => onTabChanged(index),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 curve: Curves.linear,
@@ -37,19 +41,36 @@ class SegmentedTabControl extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: isSelected
                       ? AppColors.primaryOrange
-                      : Colors.transparent,
+                      : (isDisabled
+                            ? Colors.grey.shade200
+                            : Colors.transparent),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Text(
-                  tabs[index],
-                  style: isSelected
-                      ? AppTypography.body1Medium.copyWith(
-                          color: AppColors.background,
-                          fontWeight: FontWeight.bold,
-                        )
-                      : AppTypography.body1Regular.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (isDisabled) ...[
+                      Icon(
+                        Icons.lock_outline,
+                        size: 14,
+                        color: Colors.grey.shade500,
+                      ),
+                      const SizedBox(width: 4),
+                    ],
+                    Text(
+                      tabs[index],
+                      style: isSelected
+                          ? AppTypography.body1Medium.copyWith(
+                              color: AppColors.background,
+                              fontWeight: FontWeight.bold,
+                            )
+                          : AppTypography.body1Regular.copyWith(
+                              color: isDisabled
+                                  ? Colors.grey.shade500
+                                  : AppColors.textSecondary,
+                            ),
+                    ),
+                  ],
                 ),
               ),
             ),

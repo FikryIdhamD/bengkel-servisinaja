@@ -13,7 +13,8 @@ final authStateProvider = StreamProvider<AuthState>((ref) {
   return authRepo.authStateChanges;
 });
 
-// Provider to get the current session synchronously
+// Provider to get the current session synchronously, rebuilds on auth state change
 final currentSessionProvider = Provider<Session?>((ref) {
+  ref.watch(authStateProvider); // Listen to auth state changes
   return ref.watch(authRepositoryProvider).currentSession;
 });

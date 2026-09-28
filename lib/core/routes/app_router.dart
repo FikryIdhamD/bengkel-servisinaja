@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../features/auth/presentation/screens/splash_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
+import '../../features/auth/presentation/screens/register_screen.dart';
+import '../../features/home/presentation/screens/home_screen.dart';
 
 // Provide the GoRouter instance via Riverpod so it can react to auth state changes later
 final goRouterProvider = Provider<GoRouter>((ref) {
@@ -13,13 +15,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
       GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
       GoRoute(
-        path: '/home',
-        builder: (context, state) => const Scaffold(
-          body: Center(
-            child: Text('Home Screen'),
-          ), // TODO: Replace with actual Home Screen
-        ),
+        path: '/register',
+        builder: (context, state) => const RegisterScreen(),
       ),
+      GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
       // Tambahkan route lain sesuai kebutuhan PRD di sini
     ],
     // redirect: (context, state) {
