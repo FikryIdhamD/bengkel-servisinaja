@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../constants/colors.dart';
 import '../constants/typography.dart';
+import '../constants/countries.dart';
 
 class CustomTextField extends StatefulWidget {
   final String placeholder;
@@ -9,6 +11,9 @@ class CustomTextField extends StatefulWidget {
   final Widget? prefix;
   final int? minLines;
   final int? maxLines;
+  final TextEditingController? controller;
+  final ValueChanged<String>? onChanged;
+  final List<TextInputFormatter>? inputFormatters;
 
   const CustomTextField({
     Key? key,
@@ -18,6 +23,9 @@ class CustomTextField extends StatefulWidget {
     this.prefix,
     this.minLines,
     this.maxLines = 1,
+    this.controller,
+    this.onChanged,
+    this.inputFormatters,
   }) : super(key: key);
 
   @override
@@ -30,6 +38,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      controller: widget.controller,
+      onChanged: widget.onChanged,
+      inputFormatters: widget.inputFormatters,
       obscureText: widget.isPassword ? _obscureText : false,
       keyboardType: widget.keyboardType,
       minLines: widget.minLines,
@@ -56,33 +67,86 @@ class _CustomTextFieldState extends State<CustomTextField> {
   }
 }
 
-class PhoneInputField extends StatelessWidget {
+class PhoneInputField extends StatefulWidget {
   final String placeholder;
+  final TextEditingController? controller;
+  final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onCountryCodeChanged;
 
   const PhoneInputField({
-    Key? key,
-    this.placeholder = 'Masukkan Nomor Telepon Anda',
-  }) : super(key: key);
+    super.key,
+    this.placeholder = '82123456789',
+    this.controller,
+    this.onChanged,
+    this.onCountryCodeChanged,
+  });
+
+  @override
+  State<PhoneInputField> createState() => _PhoneInputFieldState();
+}
+
+class _PhoneInputFieldState extends State<PhoneInputField> {
+  String _selectedCode = '+62';
 
   @override
   Widget build(BuildContext context) {
     return CustomTextField(
-      placeholder: placeholder,
+      controller: widget.controller,
+      onChanged: widget.onChanged,
+      placeholder: widget.placeholder,
       keyboardType: TextInputType.phone,
+      inputFormatters: [
+        FilteringTextInputFormatter.digitsOnly, // Mencegah tanda + atau huruf
+      ],
       prefix: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
+        padding: const EdgeInsets.only(left: 12, right: 8),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('🇮🇩', style: TextStyle(fontSize: 16)),
-            const SizedBox(width: 8),
-            Text(
-              '+62',
-              style: AppTypography.body1Medium.copyWith(
-                color: AppColors.textPrimary,
+            DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                value: _selectedCode,
+                icon: const Icon(
+                  Icons.arrow_drop_down,
+                  color: AppColors.textSecondary,
+                  size: 20,
+                ),
+                isDense: true,
+                onChanged: (String? newValue) {
+                  if (newValue != null) {
+                    setState(() {
+                      _selectedCode = newValue;
+                    });
+                    if (widget.onCountryCodeChanged != null) {
+                      widget.onCountryCodeChanged!(newValue);
+                    }
+                  }
+                },
+                items: AppCountries.countryList.map((
+                  Map<String, String> country,
+                ) {
+                  return DropdownMenuItem<String>(
+                    value: country['code'],
+                    child: Row(
+                      children: [
+                        Text(
+                          country['flag']!,
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          country['code']!,
+                          style: AppTypography.body1Medium.copyWith(
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 8),
             Container(width: 1, height: 24, color: AppColors.border),
             const SizedBox(width: 12),
           ],

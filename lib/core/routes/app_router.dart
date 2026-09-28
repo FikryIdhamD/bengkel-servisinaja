@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../features/auth/presentation/screens/splash_screen.dart';
+import '../../features/auth/presentation/screens/login_screen.dart';
 
 // Provide the GoRouter instance via Riverpod so it can react to auth state changes later
 final goRouterProvider = Provider<GoRouter>((ref) {
@@ -10,14 +11,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     initialLocation: '/',
     routes: [
       GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
-      GoRoute(
-        path: '/login',
-        builder: (context, state) => const Scaffold(
-          body: Center(
-            child: Text('Login Screen'),
-          ), // TODO: Replace with actual Login Screen
-        ),
-      ),
+      GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
       GoRoute(
         path: '/home',
         builder: (context, state) => const Scaffold(
