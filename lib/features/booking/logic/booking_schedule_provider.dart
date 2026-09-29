@@ -10,8 +10,48 @@ class Workshop {
 }
 
 const defaultWorkshops = [
-  Workshop('WS_1', 'BSD Autoparts', 'Jl. Letnan Sutopo', 'Tangerang Selatan'),
-  Workshop('WS_2', 'Cipete Raya', 'Jl. Cipete Raya No. 12', 'Jakarta Selatan'),
+  Workshop(
+    '11111111-1111-1111-1111-111111111111',
+    'PitStop BSD Autoparts',
+    'Jl. Letnan Sutopo No. 12',
+    'Tangerang Selatan',
+  ),
+  Workshop(
+    '22222222-2222-2222-2222-222222222222',
+    'PitStop Cipete Raya',
+    'Jl. Cipete Raya No. 45',
+    'Jakarta Selatan',
+  ),
+  Workshop(
+    '33333333-3333-3333-3333-333333333333',
+    'PitStop Kelapa Gading',
+    'Boulevard Raya Blok M No. 8',
+    'Jakarta Utara',
+  ),
+  Workshop(
+    '44444444-4444-4444-4444-444444444444',
+    'PitStop Bekasi Barat',
+    'Jl. Jenderal Sudirman No. 99',
+    'Bekasi',
+  ),
+  Workshop(
+    '55555555-5555-5555-5555-555555555555',
+    'PitStop Depok Margonda',
+    'Jl. Margonda Raya No. 123',
+    'Depok',
+  ),
+  Workshop(
+    '66666666-6666-6666-6666-666666666666',
+    'PitStop Bintaro Sektor 7',
+    'Bintaro Jaya Sektor 7',
+    'Tangerang Selatan',
+  ),
+  Workshop(
+    '77777777-7777-7777-7777-777777777777',
+    'PitStop Kebon Jeruk',
+    'Jl. Panjang No. 10',
+    'Jakarta Barat',
+  ),
 ];
 
 class ScheduleDraft {
@@ -70,3 +110,4 @@ class BookingScheduleNotifier extends Notifier<ScheduleDraft> {
     state = ScheduleDraft(selectedDate: DateTime.now());
   }
 }
+

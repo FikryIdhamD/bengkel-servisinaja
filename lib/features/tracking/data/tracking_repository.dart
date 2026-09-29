@@ -43,7 +43,10 @@ class TrackingRepository {
         .eq('id', itemId);
   }
 
-  Future<void> simulateUpdateBookingStatus(String bookingId, String status) async {
+  Future<void> simulateUpdateBookingStatus(
+    String bookingId,
+    String status,
+  ) async {
     await _client
         .from('bookings')
         .update({'status': status})

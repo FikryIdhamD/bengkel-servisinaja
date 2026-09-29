@@ -6,7 +6,9 @@ import '../../features/auth/presentation/screens/splash_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
+import '../../features/garage/presentation/screens/garage_screen.dart';
 import '../../features/home/presentation/screens/main_layout_screen.dart';
+import '../../features/booking/presentation/screens/workshop_selection_screen.dart';
 import '../../features/booking/presentation/screens/vehicle_selection_screen.dart';
 import '../../features/booking/presentation/screens/service_configuration_screen.dart';
 import '../../features/booking/presentation/screens/schedule_workshop_screen.dart';
@@ -35,6 +37,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const HomeScreen(),
           ),
           GoRoute(
+            path: '/garage',
+            builder: (context, state) => const GarageScreen(),
+          ),
+          GoRoute(
             path: '/tickets',
             builder: (context, state) => const TicketListScreen(),
           ),
@@ -45,6 +51,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             ),
           ),
         ],
+      ),
+      GoRoute(
+        path: '/workshop-selection',
+        builder: (context, state) => const WorkshopSelectionScreen(),
       ),
       GoRoute(
         path: '/vehicle-selection',

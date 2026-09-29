@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/typography.dart';
 import '../../../../core/widgets/primary_button.dart';
-import '../../../../core/widgets/custom_text_field.dart';
+
 import '../../../../core/widgets/vehicle_card.dart';
 import '../../../../core/widgets/confirmation_dialog.dart';
 import '../../../garage/logic/garage_provider.dart';
@@ -87,46 +87,10 @@ class VehicleSelectionScreen extends ConsumerWidget {
                   data: (vehicles) {
                     return ListView.separated(
                       padding: const EdgeInsets.all(20.0),
-                      itemCount:
-                          vehicles.length + 1, // +1 for the add new button
+                      itemCount: vehicles.length,
                       separatorBuilder: (context, index) =>
                           const SizedBox(height: 12),
                       itemBuilder: (context, index) {
-                        if (index == vehicles.length) {
-                          // Add New Vehicle Button
-                          return GestureDetector(
-                            onTap: () => _showAddVehicleModal(context, ref),
-                            child: Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: AppColors.background,
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: AppColors.primaryOrange,
-                                  width: 1,
-                                  style: BorderStyle.solid,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Icon(
-                                    Icons.add,
-                                    color: AppColors.primaryOrange,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    'Tambah Motor Baru',
-                                    style: AppTypography.headline2.copyWith(
-                                      color: AppColors.primaryOrange,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        }
-
                         final v = vehicles[index];
                         final isSelected = selectedVehicles.any(
                           (selected) => selected.id == v.id,
@@ -204,130 +168,6 @@ class VehicleSelectionScreen extends ConsumerWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  void _showAddVehicleModal(BuildContext context, WidgetRef ref) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => _AddVehicleModalSheet(ref: ref),
-    );
-  }
-}
-
-class _AddVehicleModalSheet extends StatefulWidget {
-  final WidgetRef ref;
-
-  const _AddVehicleModalSheet({required this.ref});
-
-  @override
-  State<_AddVehicleModalSheet> createState() => _AddVehicleModalSheetState();
-}
-
-class _AddVehicleModalSheetState extends State<_AddVehicleModalSheet> {
-  final _plateController = TextEditingController();
-  final _modelController = TextEditingController();
-  final _yearController = TextEditingController();
-  bool _isLoading = false;
-
-  void _submit() async {
-    final plate = _plateController.text.trim();
-    final model = _modelController.text.trim();
-    final year = int.tryParse(_yearController.text.trim()) ?? 0;
-
-    if (plate.isEmpty || model.isEmpty || year == 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Mohon lengkapi semua data dengan benar')),
-      );
-      return;
-    }
-
-    setState(() => _isLoading = true);
-
-    try {
-      final newVehicle = await widget.ref
-          .read(garageProvider.notifier)
-          .addVehicle(plate, model, year);
-      if (newVehicle != null) {
-        widget.ref
-            .read(selectedVehiclesProvider.notifier)
-            .selectVehicle(newVehicle);
-      }
-      if (mounted) {
-        Navigator.pop(context);
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Gagal menambahkan motor: $e')));
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(
-        top: 24,
-        left: 20,
-        right: 20,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 24,
-      ),
-      decoration: const BoxDecoration(
-        color: AppColors.background,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Tambah Motor Baru', style: AppTypography.headline1),
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Text('Nomor Polisi', style: AppTypography.body1Medium),
-          const SizedBox(height: 8),
-          CustomTextField(
-            placeholder: 'Misal: B 1234 ABC',
-            controller: _plateController,
-          ),
-          const SizedBox(height: 16),
-          Text('Merk & Model Motor', style: AppTypography.body1Medium),
-          const SizedBox(height: 8),
-          CustomTextField(
-            placeholder: 'Misal: Honda Vario 160',
-            controller: _modelController,
-          ),
-          const SizedBox(height: 16),
-          Text('Tahun Pembuatan', style: AppTypography.body1Medium),
-          const SizedBox(height: 8),
-          CustomTextField(
-            placeholder: 'Misal: 2023',
-            keyboardType: TextInputType.number,
-            controller: _yearController,
-          ),
-          const SizedBox(height: 24),
-          PrimaryButton(
-            text: 'Simpan ke Garasi & Pilih',
-            isLoading: _isLoading,
-            onPressed: _submit,
-          ),
-        ],
       ),
     );
   }

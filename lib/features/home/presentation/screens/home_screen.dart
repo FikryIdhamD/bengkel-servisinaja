@@ -3,10 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/typography.dart';
-import '../../../../core/widgets/primary_button.dart';
+
 import '../../../../core/widgets/confirmation_dialog.dart';
 import '../../../auth/logic/auth_controller.dart';
 import '../../../garage/logic/garage_provider.dart';
+import '../../../booking/logic/booking_schedule_provider.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -104,6 +105,36 @@ class HomeScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Lokasi Saat Ini
+              Row(
+                children: [
+                  const Icon(
+                    Icons.location_on,
+                    color: AppColors.primaryOrange,
+                    size: 24,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Lokasi Saat Ini', style: AppTypography.caption),
+                        Text(
+                          'Jakarta Barat, DKI Jakarta',
+                          style: AppTypography.body1Medium,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Icon(
+                    Icons.keyboard_arrow_down,
+                    color: AppColors.textSecondary,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+
               // Banner Promosi
               Container(
                 width: double.infinity,
@@ -151,7 +182,9 @@ class HomeScreen extends ConsumerWidget {
                 children: [
                   Text('Garasi Saya', style: AppTypography.headline2),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      context.go('/garage');
+                    },
                     child: Text(
                       'Lihat Semua',
                       style: AppTypography.body1Medium.copyWith(
@@ -188,7 +221,7 @@ class HomeScreen extends ConsumerWidget {
                     height: 120,
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
-                      itemCount: vehicles.length,
+                      itemCount: vehicles.length > 3 ? 3 : vehicles.length,
                       separatorBuilder: (context, index) =>
                           const SizedBox(width: 16),
                       itemBuilder: (context, index) {
@@ -244,21 +277,119 @@ class HomeScreen extends ConsumerWidget {
                   style: AppTypography.body2.copyWith(color: Colors.red),
                 ),
               ),
+              const SizedBox(height: 32),
+
+              // Bengkel Terdekat
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Bengkel Terdekat', style: AppTypography.headline2),
+                  TextButton(
+                    onPressed: () {},
+                    child: Text(
+                      'Lihat Peta',
+                      style: AppTypography.body1Medium.copyWith(
+                        color: AppColors.primaryOrange,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              GestureDetector(
+                onTap: () {
+                  final refNotifier = ref.read(
+                    bookingScheduleProvider.notifier,
+                  );
+                  refNotifier.setWorkshop(defaultWorkshops[0]);
+                  context.push('/vehicle-selection');
+                },
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.border),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.04),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          color: AppColors.primarySurface,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(
+                          Icons.store,
+                          color: AppColors.primaryOrange,
+                          size: 32,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'BSD Autoparts',
+                              style: AppTypography.headline2,
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Jl. Letnan Sutopo, Tangerang Selatan',
+                              style: AppTypography.body2,
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.location_on,
+                                  size: 14,
+                                  color: AppColors.primaryOrange,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  '1.2 km',
+                                  style: AppTypography.caption.copyWith(
+                                    color: AppColors.primaryOrange,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                const Icon(
+                                  Icons.star,
+                                  size: 14,
+                                  color: Colors.orange,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  '4.8',
+                                  style: AppTypography.caption.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
 
               const SizedBox(height: 40),
             ],
-          ),
-        ),
-      ),
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: PrimaryButton(
-            text: 'Booking Servis Multi-Unit Sekarang',
-            icon: Icons.build,
-            onPressed: () {
-              context.push('/vehicle-selection');
-            },
           ),
         ),
       ),

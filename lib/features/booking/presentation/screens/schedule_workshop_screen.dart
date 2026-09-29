@@ -31,7 +31,7 @@ class ScheduleWorkshopScreen extends ConsumerWidget {
           onPressed: () => context.pop(),
         ),
         title: Text(
-          'Jadwal & Lokasi',
+          'Jadwal Kedatangan',
           style: AppTypography.headline1.copyWith(
             color: AppColors.charcoalDark,
           ),
@@ -46,66 +46,6 @@ class ScheduleWorkshopScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Cabang Bengkel Resmi', style: AppTypography.headline2),
-                  const SizedBox(height: 12),
-                  ...defaultWorkshops.map((workshop) {
-                    final isSelected =
-                        scheduleState.selectedWorkshop?.id == workshop.id;
-                    return GestureDetector(
-                      onTap: () => ref
-                          .read(bookingScheduleProvider.notifier)
-                          .setWorkshop(workshop),
-                      child: Container(
-                        margin: const EdgeInsets.only(bottom: 12),
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? AppColors.primarySurface
-                              : AppColors.background,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: isSelected
-                                ? AppColors.primaryOrange
-                                : AppColors.border,
-                            width: isSelected ? 1.5 : 1,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.storefront,
-                              color: isSelected
-                                  ? AppColors.primaryOrange
-                                  : AppColors.textSecondary,
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    workshop.name,
-                                    style: AppTypography.headline2.copyWith(
-                                      color: isSelected
-                                          ? AppColors.primaryOrange
-                                          : AppColors.textPrimary,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    '${workshop.address}, ${workshop.city}',
-                                    style: AppTypography.body2,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }),
-
-                  const SizedBox(height: 24),
                   Text('Tanggal Kedatangan', style: AppTypography.headline2),
                   const SizedBox(height: 12),
                   _DateDropdownSelector(
