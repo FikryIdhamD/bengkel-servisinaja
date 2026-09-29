@@ -11,6 +11,8 @@ import '../../features/booking/presentation/screens/vehicle_selection_screen.dar
 import '../../features/booking/presentation/screens/service_configuration_screen.dart';
 import '../../features/booking/presentation/screens/schedule_workshop_screen.dart';
 import '../../features/booking/presentation/screens/summary_checkout_screen.dart';
+import '../../features/tracking/presentation/screens/booking_ticket_tracking_screen.dart';
+import '../../features/tracking/presentation/screens/ticket_list_screen.dart';
 
 // Provide the GoRouter instance via Riverpod so it can react to auth state changes later
 final goRouterProvider = Provider<GoRouter>((ref) {
@@ -34,9 +36,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/tickets',
-            builder: (context, state) => const Scaffold(
-              body: Center(child: Text('Halaman Tiket (Tahap Pengembangan)')),
-            ),
+            builder: (context, state) => const TicketListScreen(),
           ),
           GoRoute(
             path: '/profile',
@@ -62,7 +62,13 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: '/summary-checkout',
         builder: (context, state) => const SummaryCheckoutScreen(),
       ),
-      // Tambahkan route lain sesuai kebutuhan PRD di sini
+      GoRoute(
+        path: '/tracking/:id',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return BookingTicketTrackingScreen(bookingId: id);
+        },
+      ),
     ],
   );
 });

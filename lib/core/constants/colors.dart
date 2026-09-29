@@ -22,4 +22,5 @@ class AppColors {
   static const Color statusProgress = Color(0xFF0284C7);
   static const Color statusCheck = Color(0xFF8B5CF6);
   static const Color statusSuccess = Color(0xFF10B981);
+  static const Color statusError = Color(0xFFEF4444);
 }

@@ -58,7 +58,7 @@ class _SummaryCheckoutScreenState extends ConsumerState<SummaryCheckoutScreen> {
         }
       }
 
-      await repo.createBooking(
+      final bookingId = await repo.createBooking(
         userId: user.id,
         workshopName: schedule.selectedWorkshop!.name,
         bookingDate: schedule.selectedDate!,
@@ -100,10 +100,11 @@ class _SummaryCheckoutScreenState extends ConsumerState<SummaryCheckoutScreen> {
                   ),
                   onPressed: () {
                     Navigator.pop(ctx);
-                    context.go('/home');
+                    context.go('/tickets');
+                    context.push('/tracking/$bookingId');
                   },
                   child: Text(
-                    'Kembali ke Beranda',
+                    'Lihat Tiket',
                     style: AppTypography.buttonText.copyWith(
                       color: AppColors.background,
                     ),
@@ -311,6 +312,126 @@ class _SummaryCheckoutScreenState extends ConsumerState<SummaryCheckoutScreen> {
                   }),
 
                   const SizedBox(height: 16),
+                  Text('Metode Pembayaran', style: AppTypography.headline2),
+                  const SizedBox(height: 12),
+                  Column(
+                    children: [
+                      // Opsi 1: Bayar di Bengkel (Selected)
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppColors.background,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppColors.primaryOrange),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.payments,
+                              color: AppColors.primaryOrange,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Bayar di Bengkel',
+                                    style: AppTypography.body1Medium,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Pembayaran dilakukan setelah servis selesai',
+                                    style: AppTypography.caption,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Icon(
+                              Icons.check_circle,
+                              color: AppColors.primaryOrange,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Opsi 2: Transfer Bank (Unselected)
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppColors.surfaceGrey,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppColors.border),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.account_balance,
+                              color: AppColors.textSecondary,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Transfer Bank (Virtual Account)',
+                                    style: AppTypography.body1Medium.copyWith(
+                                      color: AppColors.textSecondary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Icon(
+                              Icons.circle_outlined,
+                              color: AppColors.border,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Opsi 3: E-Wallet (Unselected)
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppColors.surfaceGrey,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppColors.border),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.account_balance_wallet,
+                              color: AppColors.textSecondary,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'E-Wallet (GoPay, OVO, Dana)',
+                                    style: AppTypography.body1Medium.copyWith(
+                                      color: AppColors.textSecondary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Icon(
+                              Icons.circle_outlined,
+                              color: AppColors.border,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 24),
                   const Divider(color: AppColors.border),
                   const SizedBox(height: 16),
 

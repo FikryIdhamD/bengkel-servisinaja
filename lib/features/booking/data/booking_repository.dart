@@ -10,7 +10,7 @@ class BookingRepository {
 
   BookingRepository(this._client);
 
-  Future<void> createBooking({
+  Future<String> createBooking({
     required String userId,
     required String workshopName,
     required DateTime bookingDate,
@@ -35,7 +35,7 @@ class BookingRepository {
           'booking_time': timeSlot, // CHANGED from time_slot
           'total_amount': totalPrice, // CHANGED from total_price
           'total_duration_minutes': totalDuration,
-          'status': 'PENDING',
+          'status': 'Menunggu Kedatangan',
         })
         .select()
         .single();
@@ -51,7 +51,9 @@ class BookingRepository {
         'spare_parts_names': item['spare_parts_names'],
         'complaints': item['complaints'],
         'subtotal_price': item['subtotal_price'],
+        'status': 'Menunggu Antrean',
       });
     }
+    return bookingId;
   }
 }

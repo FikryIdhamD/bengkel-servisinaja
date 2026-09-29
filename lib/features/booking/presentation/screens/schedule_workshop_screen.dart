@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/typography.dart';
 import '../../../../core/widgets/primary_button.dart';
@@ -19,7 +18,6 @@ class ScheduleWorkshopScreen extends ConsumerWidget {
     final summary = ref.watch(bookingSummaryComputedProvider);
 
     final today = DateTime.now();
-    final next7Days = List.generate(7, (i) => today.add(Duration(days: i)));
     final timeSlots = ['09:00', '10:00', '11:00', '13:00', '14:00', '15:00'];
 
     return Scaffold(
