@@ -16,7 +16,11 @@ class AppTheme {
       appBarTheme: AppBarTheme(
         backgroundColor: AppColors.background,
         elevation: 0,
+        scrolledUnderElevation: 0,
         centerTitle: true,
+        shape: const Border(
+          bottom: BorderSide(color: AppColors.border, width: 1),
+        ),
         iconTheme: IconThemeData(color: AppColors.textPrimary),
         titleTextStyle: AppTypography.headline1,
       ),
@@ -59,7 +63,7 @@ class AppTheme {
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.red, width: 1),
+          borderSide: const BorderSide(color: AppColors.statusError, width: 1),
         ),
       ),
     );

@@ -7,16 +7,24 @@ import '../../../../core/widgets/primary_button.dart';
 import '../../logic/multi_vehicle_selection_provider.dart';
 import '../../logic/booking_schedule_provider.dart';
 import '../../logic/booking_summary_computed_provider.dart';
+import '../../../../core/models/workshop.dart';
+import '../../../../core/data/dummy_workshops.dart';
 
-class ScheduleWorkshopScreen extends ConsumerWidget {
+class ScheduleWorkshopScreen extends ConsumerStatefulWidget {
   const ScheduleWorkshopScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ScheduleWorkshopScreen> createState() =>
+      _ScheduleWorkshopScreenState();
+}
+
+class _ScheduleWorkshopScreenState
+    extends ConsumerState<ScheduleWorkshopScreen> {
+  @override
+  Widget build(BuildContext context) {
     final scheduleState = ref.watch(bookingScheduleProvider);
     final selectedVehicles = ref.watch(selectedVehiclesProvider);
     final summary = ref.watch(bookingSummaryComputedProvider);
-
     final today = DateTime.now();
     final timeSlots = ['09:00', '10:00', '11:00', '13:00', '14:00', '15:00'];
 
@@ -31,7 +39,7 @@ class ScheduleWorkshopScreen extends ConsumerWidget {
           onPressed: () => context.pop(),
         ),
         title: Text(
-          'Jadwal Kedatangan',
+          'Jadwal & Lokasi',
           style: AppTypography.headline1.copyWith(
             color: AppColors.charcoalDark,
           ),
@@ -46,6 +54,34 @@ class ScheduleWorkshopScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text('Pilih Cabang Bengkel', style: AppTypography.headline2),
+                  const SizedBox(height: 12),
+                  DropdownButtonFormField<Workshop>(
+                    value: scheduleState.selectedWorkshop,
+                    items: defaultWorkshops.map((w) {
+                      return DropdownMenuItem(value: w, child: Text(w.name));
+                    }).toList(),
+                    onChanged: (w) {
+                      if (w != null) {
+                        ref
+                            .read(bookingScheduleProvider.notifier)
+                            .setWorkshop(w);
+                      }
+                    },
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: AppColors.border),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(color: AppColors.border),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
                   Text('Tanggal Kedatangan', style: AppTypography.headline2),
                   const SizedBox(height: 12),
                   _DateDropdownSelector(

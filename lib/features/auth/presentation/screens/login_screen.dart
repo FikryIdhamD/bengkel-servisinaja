@@ -110,7 +110,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Gagal masuk: ${e.toString()}'),
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.statusError,
           ),
         );
       }

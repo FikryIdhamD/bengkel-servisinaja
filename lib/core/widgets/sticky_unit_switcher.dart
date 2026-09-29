@@ -34,7 +34,6 @@ class StickyUnitSwitcher extends StatelessWidget {
                   Color bgColor;
                   Color borderColor;
                   Color textColor;
-
                   if (isCompleted) {
                     bgColor = AppColors.primaryOrange;
                     borderColor = AppColors.primaryOrange;

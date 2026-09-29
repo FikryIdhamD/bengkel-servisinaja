@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/typography.dart';
 import '../../logic/tracking_stream_provider.dart';
@@ -63,7 +64,7 @@ class BookingTicketTrackingScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildHeader(booking),
+                  _buildHeader(context, booking, itemsAsync),
                   const SizedBox(height: 24),
                   Text('Status Kendaraan', style: AppTypography.headline2),
                   const SizedBox(height: 16),
@@ -98,12 +99,16 @@ class BookingTicketTrackingScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildHeader(Map<String, dynamic> booking) {
+  Widget _buildHeader(
+    BuildContext context,
+    Map<String, dynamic> booking,
+    AsyncValue<List<Map<String, dynamic>>> itemsAsync,
+  ) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.surfaceGrey,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppColors.border),
       ),
@@ -155,6 +160,80 @@ class BookingTicketTrackingScreen extends ConsumerWidget {
                 },
               ),
             ],
+          ),
+          const SizedBox(height: 12),
+          Theme(
+            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+            child: ExpansionTile(
+              tilePadding: EdgeInsets.zero,
+              title: Text('Total Tagihan', style: AppTypography.body1Medium),
+              trailing: Text(
+                booking['total_amount'] != null
+                    ? NumberFormat.currency(
+                        locale: 'id_ID',
+                        symbol: 'Rp ',
+                        decimalDigits: 0,
+                      ).format(booking['total_amount'])
+                    : 'Menunggu Estimasi',
+                style: AppTypography.headline2.copyWith(
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              children: [
+                const Divider(),
+                itemsAsync.when(
+                  data: (items) {
+                    if (items.isEmpty) return const SizedBox();
+                    return Column(
+                      children: items.map((item) {
+                        final List<dynamic> parts =
+                            item['spare_parts_names'] ?? [];
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      item['service_package_name'] ?? 'Layanan',
+                                      style: AppTypography.body2,
+                                    ),
+                                    if (parts.isNotEmpty)
+                                      Text(
+                                        'Part: ${parts.join(', ')}',
+                                        style: AppTypography.caption,
+                                      ),
+                                  ],
+                                ),
+                              ),
+                              Text(
+                                item['subtotal_price'] != null
+                                    ? NumberFormat.currency(
+                                        locale: 'id_ID',
+                                        symbol: 'Rp ',
+                                        decimalDigits: 0,
+                                      ).format(item['subtotal_price'])
+                                    : '-',
+                                style: AppTypography.body2,
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    );
+                  },
+                  loading: () => const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: CircularProgressIndicator(),
+                  ),
+                  error: (e, s) => const SizedBox(),
+                ),
+              ],
+            ),
           ),
         ],
       ),

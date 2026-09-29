@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/typography.dart';
+import '../../../../core/widgets/shimmer_loading.dart';
 import '../../../auth/logic/auth_controller.dart';
 import '../../logic/tracking_stream_provider.dart';
 
@@ -70,7 +71,7 @@ class TicketListScreen extends ConsumerWidget {
                   margin: const EdgeInsets.only(bottom: 16),
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: AppColors.surfaceGrey,
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: AppColors.border),
                   ),
@@ -106,22 +107,30 @@ class TicketListScreen extends ConsumerWidget {
                                 if (status == 'Dibatalkan')
                                   statusColor = AppColors.statusError;
 
-                                return Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: statusColor.withValues(alpha: 0.1),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Text(
-                                    status,
-                                    style: AppTypography.caption.copyWith(
-                                      color: statusColor,
-                                      fontWeight: FontWeight.bold,
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: statusColor.withValues(
+                                          alpha: 0.1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Text(
+                                        status,
+                                        style: AppTypography.caption.copyWith(
+                                          color: statusColor,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
                                     ),
-                                  ),
+
+                                  ],
                                 );
                               },
                             ),
@@ -139,8 +148,12 @@ class TicketListScreen extends ConsumerWidget {
             },
           );
         },
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: AppColors.primaryOrange),
+        loading: () => ListView.separated(
+          padding: const EdgeInsets.all(20),
+          itemCount: 4,
+          separatorBuilder: (context, index) => const SizedBox(height: 16),
+          itemBuilder: (context, index) =>
+              const ShimmerLoading(width: double.infinity, height: 100),
         ),
         error: (err, stack) => Center(child: Text('Error: $err')),
       ),

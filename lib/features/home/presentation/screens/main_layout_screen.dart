@@ -10,71 +10,79 @@ class MainLayoutScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: child,
-      floatingActionButton: Transform.translate(
-        offset: const Offset(0, 20),
-        child: FloatingActionButton(
-          onPressed: () => context.push('/workshop-selection'),
+    final currentIndex = _calculateSelectedIndex(context);
+    return PopScope(
+      canPop: currentIndex == 0,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          context.go('/home');
+        }
+      },
+      child: Scaffold(
+        body: child,
+        floatingActionButton: FloatingActionButton(
+          onPressed: () => context.push('/vehicle-selection'),
           backgroundColor: AppColors.primaryOrange,
           shape: const CircleBorder(),
           elevation: 4,
           child: const Icon(Icons.build, color: Colors.white),
         ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomAppBar(
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 8.0,
-        color: AppColors.background,
-        elevation: 8,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Expanded(
-                child: _buildNavItem(
-                  context,
-                  icon: Icons.home_outlined,
-                  activeIcon: Icons.home,
-                  label: 'Beranda',
-                  index: 0,
-                  route: '/home',
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        bottomNavigationBar: BottomAppBar(
+          shape: const CircularNotchedRectangle(),
+          notchMargin: 8.0,
+          color: AppColors.background,
+          surfaceTintColor: Colors.transparent,
+          shadowColor: Colors.black,
+          elevation: 10,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Expanded(
+                  child: _buildNavItem(
+                    context,
+                    icon: Icons.home_outlined,
+                    activeIcon: Icons.home,
+                    label: 'Beranda',
+                    index: 0,
+                    route: '/home',
+                  ),
                 ),
-              ),
-              Expanded(
-                child: _buildNavItem(
-                  context,
-                  icon: Icons.garage_outlined,
-                  activeIcon: Icons.garage,
-                  label: 'Garasi',
-                  index: 1,
-                  route: '/garage',
+                Expanded(
+                  child: _buildNavItem(
+                    context,
+                    icon: Icons.garage_outlined,
+                    activeIcon: Icons.garage,
+                    label: 'Garasi',
+                    index: 1,
+                    route: '/garage',
+                  ),
                 ),
-              ),
-              const SizedBox(width: 48), // Spacer for FAB
-              Expanded(
-                child: _buildNavItem(
-                  context,
-                  icon: Icons.receipt_long_outlined,
-                  activeIcon: Icons.receipt_long,
-                  label: 'Tiket',
-                  index: 2,
-                  route: '/tickets',
+                const SizedBox(width: 48), // Spacer for FAB
+                Expanded(
+                  child: _buildNavItem(
+                    context,
+                    icon: Icons.receipt_long_outlined,
+                    activeIcon: Icons.receipt_long,
+                    label: 'Tiket',
+                    index: 2,
+                    route: '/tickets',
+                  ),
                 ),
-              ),
-              Expanded(
-                child: _buildNavItem(
-                  context,
-                  icon: Icons.person_outline,
-                  activeIcon: Icons.person,
-                  label: 'Profil',
-                  index: 3,
-                  route: '/profile',
+                Expanded(
+                  child: _buildNavItem(
+                    context,
+                    icon: Icons.person_outline,
+                    activeIcon: Icons.person,
+                    label: 'Profil',
+                    index: 3,
+                    route: '/profile',
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -90,45 +98,40 @@ class MainLayoutScreen extends StatelessWidget {
     required String route,
   }) {
     final isSelected = _calculateSelectedIndex(context) == index;
-    final color = isSelected
-        ? AppColors.primaryOrange
-        : AppColors.textSecondary;
-
     return InkWell(
       onTap: () => context.go(route),
-      customBorder: const CircleBorder(),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(isSelected ? activeIcon : icon, color: color, size: 24),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: AppTypography.caption.copyWith(
-                color: color,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            isSelected ? activeIcon : icon,
+            color: isSelected
+                ? AppColors.primaryOrange
+                : AppColors.textSecondary,
+            size: 24,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: AppTypography.caption.copyWith(
+              color: isSelected
+                  ? AppColors.primaryOrange
+                  : AppColors.textSecondary,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  static int _calculateSelectedIndex(BuildContext context) {
-    final String location = GoRouterState.of(context).matchedLocation;
-    if (location.startsWith('/garage')) {
-      return 1;
-    }
-    if (location.startsWith('/tickets')) {
-      return 2;
-    }
-    if (location.startsWith('/profile')) {
-      return 3;
-    }
-    return 0; // Default to /home
+  int _calculateSelectedIndex(BuildContext context) {
+    final location = GoRouterState.of(context).uri.path;
+    if (location.startsWith('/home')) return 0;
+    if (location.startsWith('/garage')) return 1;
+    if (location.startsWith('/tickets')) return 2;
+    if (location.startsWith('/profile')) return 3;
+    return 0;
   }
 }

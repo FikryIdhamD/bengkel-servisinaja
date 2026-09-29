@@ -42,7 +42,7 @@ class SegmentedTabControl extends StatelessWidget {
                   color: isSelected
                       ? AppColors.primaryOrange
                       : (isDisabled
-                            ? Colors.grey.shade200
+                            ? AppColors.surfaceGrey
                             : Colors.transparent),
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -53,7 +53,7 @@ class SegmentedTabControl extends StatelessWidget {
                       Icon(
                         Icons.lock_outline,
                         size: 14,
-                        color: Colors.grey.shade500,
+                        color: AppColors.textSecondary,
                       ),
                       const SizedBox(width: 4),
                     ],
@@ -66,7 +66,7 @@ class SegmentedTabControl extends StatelessWidget {
                             )
                           : AppTypography.body1Regular.copyWith(
                               color: isDisabled
-                                  ? Colors.grey.shade500
+                                  ? AppColors.textSecondary
                                   : AppColors.textSecondary,
                             ),
                     ),

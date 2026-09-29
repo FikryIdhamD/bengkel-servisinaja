@@ -118,7 +118,9 @@ class VehicleSelectionScreen extends ConsumerWidget {
                   error: (err, stack) => Center(
                     child: Text(
                       'Terjadi kesalahan: $err',
-                      style: AppTypography.body2.copyWith(color: Colors.red),
+                      style: AppTypography.body2.copyWith(
+                        color: AppColors.statusError,
+                      ),
                     ),
                   ),
                 ),

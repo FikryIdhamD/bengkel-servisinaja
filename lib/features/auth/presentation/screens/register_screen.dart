@@ -76,7 +76,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Gagal mendaftar: ${e.toString()}'),
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.statusError,
           ),
         );
       }
@@ -238,7 +238,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   padding: const EdgeInsets.only(top: 8.0, left: 16.0),
                   child: Text(
                     'Kata sandi tidak cocok',
-                    style: AppTypography.caption.copyWith(color: Colors.red),
+                    style: AppTypography.caption.copyWith(
+                      color: AppColors.statusError,
+                    ),
                   ),
                 ),
 
