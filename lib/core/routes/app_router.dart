@@ -7,6 +7,7 @@ import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/home/presentation/screens/main_layout_screen.dart';
+import '../../features/booking/presentation/screens/vehicle_selection_screen.dart';
 
 // Provide the GoRouter instance via Riverpod so it can react to auth state changes later
 final goRouterProvider = Provider<GoRouter>((ref) {
@@ -41,6 +42,16 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             ),
           ),
         ],
+      ),
+      GoRoute(
+        path: '/vehicle-selection',
+        builder: (context, state) => const VehicleSelectionScreen(),
+      ),
+      GoRoute(
+        path: '/service-configuration',
+        builder: (context, state) => const Scaffold(
+          body: Center(child: Text('Halaman Konfigurasi Servis')),
+        ),
       ),
       // Tambahkan route lain sesuai kebutuhan PRD di sini
     ],

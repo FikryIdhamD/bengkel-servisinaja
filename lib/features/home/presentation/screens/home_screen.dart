@@ -91,48 +91,58 @@ class HomeScreen extends ConsumerWidget {
                       ),
                     ),
                     actions: [
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.surfaceGrey,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.surfaceGrey,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                elevation: 0,
+                              ),
+                              onPressed: () {
+                                Navigator.pop(dialogContext); // Tutup dialog
+                              },
+                              child: Text(
+                                'Batal',
+                                style: AppTypography.buttonText.copyWith(
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                            ),
                           ),
-                          elevation: 0,
-                        ),
-                        onPressed: () {
-                          Navigator.pop(dialogContext); // Tutup dialog
-                        },
-                        child: Text(
-                          'Batal',
-                          style: AppTypography.buttonText.copyWith(
-                            color: AppColors.textSecondary,
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primaryOrange,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                elevation: 0,
+                              ),
+                              onPressed: () {
+                                Navigator.pop(dialogContext); // Tutup dialog
+                                final authRepo = ref.read(
+                                  authRepositoryProvider,
+                                );
+                                context.go('/login'); // Pindah halaman
+                                Future.microtask(() async {
+                                  await authRepo
+                                      .signOut(); // Proses logout background
+                                });
+                              },
+                              child: Text(
+                                'Keluar',
+                                style: AppTypography.buttonText.copyWith(
+                                  color: AppColors.background,
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryOrange,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          elevation: 0,
-                        ),
-                        onPressed: () {
-                          Navigator.pop(dialogContext); // Tutup dialog
-                          final authRepo = ref.read(authRepositoryProvider);
-                          context.go('/login'); // Pindah halaman
-                          Future.microtask(() async {
-                            await authRepo
-                                .signOut(); // Proses logout background
-                          });
-                        },
-                        child: Text(
-                          'Keluar',
-                          style: AppTypography.buttonText.copyWith(
-                            color: AppColors.background,
-                          ),
-                        ),
+                        ],
                       ),
                     ],
                   );
@@ -177,7 +187,7 @@ class HomeScreen extends ConsumerWidget {
                           Text(
                             'di PitStop by Servisin Aja',
                             style: AppTypography.body2.copyWith(
-                              color: Colors.white.withOpacity(0.9),
+                              color: Colors.white.withValues(alpha: 0.9),
                             ),
                           ),
                         ],
@@ -302,7 +312,7 @@ class HomeScreen extends ConsumerWidget {
             text: 'Booking Servis Multi-Unit Sekarang',
             icon: Icons.build,
             onPressed: () {
-              // TODO: Navigate to Vehicle Selection Screen
+              context.push('/vehicle-selection');
             },
           ),
         ),

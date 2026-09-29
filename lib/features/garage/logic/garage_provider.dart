@@ -18,21 +18,24 @@ class GarageNotifier extends AsyncNotifier<List<Vehicle>> {
     return await repo.getVehicles(userId);
   }
 
-  Future<void> addVehicle(
+  Future<Vehicle?> addVehicle(
     String plateNumber,
     String modelName,
     int year,
   ) async {
     final session = ref.read(currentSessionProvider);
     final userId = session?.user.id;
-    if (userId == null) return;
+    if (userId == null) return null;
 
     final repo = ref.read(vehicleRepositoryProvider);
+    Vehicle? newVehicle;
 
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
-      await repo.addVehicle(userId, plateNumber, modelName, year);
+      newVehicle = await repo.addVehicle(userId, plateNumber, modelName, year);
       return repo.getVehicles(userId);
     });
+
+    return newVehicle;
   }
 }
