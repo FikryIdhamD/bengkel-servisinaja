@@ -92,4 +92,8 @@ class ServiceConfigurationNotifier
     final current = state[vehicleId] ?? const VehicleConfigDraft();
     state = {...state, vehicleId: current.copyWith(complaints: text)};
   }
+
+  void clear() {
+    state = {};
+  }
 }

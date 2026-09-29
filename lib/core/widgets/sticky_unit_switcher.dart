@@ -29,44 +29,53 @@ class StickyUnitSwitcher extends StatelessWidget {
             final isCompleted = completedStatus[index];
             return GestureDetector(
               onTap: () => onUnitChanged(index),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      color: isSelected
-                          ? AppColors.primaryOrange
-                          : Colors.transparent,
-                      width: 2,
+              child: Builder(
+                builder: (context) {
+                  Color bgColor;
+                  Color borderColor;
+                  Color textColor;
+
+                  if (isCompleted) {
+                    bgColor = AppColors.primaryOrange;
+                    borderColor = AppColors.primaryOrange;
+                    textColor = AppColors.background;
+                  } else if (isSelected) {
+                    bgColor = AppColors.background;
+                    borderColor = AppColors.primaryOrange;
+                    textColor = AppColors.primaryOrange;
+                  } else {
+                    bgColor = AppColors.background;
+                    borderColor = AppColors.border;
+                    textColor = AppColors.textSecondary;
+                  }
+
+                  return Container(
+                    margin: EdgeInsets.only(
+                      right: 8,
+                      top: 12,
+                      bottom: 12,
+                      left: index == 0 ? 16 : 0,
                     ),
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Text(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: bgColor,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: borderColor),
+                    ),
+                    child: Text(
                       units[index],
-                      style: isSelected
-                          ? AppTypography.body1Medium.copyWith(
-                              color: AppColors.primaryOrange,
-                              fontWeight: FontWeight.bold,
-                            )
-                          : AppTypography.body1Regular.copyWith(
-                              color: AppColors.textSecondary,
-                            ),
-                    ),
-                    if (isCompleted) ...[
-                      const SizedBox(width: 8),
-                      const Icon(
-                        Icons.check_circle,
-                        size: 16,
-                        color: AppColors.statusSuccess,
+                      style: AppTypography.body1Medium.copyWith(
+                        color: textColor,
+                        fontWeight: isSelected || isCompleted
+                            ? FontWeight.bold
+                            : FontWeight.normal,
                       ),
-                    ],
-                  ],
-                ),
+                    ),
+                  );
+                },
               ),
             );
           }),

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/typography.dart';
 import '../../../../core/widgets/primary_button.dart';
+import '../../../../core/widgets/confirmation_dialog.dart';
 import '../../../auth/logic/auth_controller.dart';
 import '../../../garage/logic/garage_provider.dart';
 
@@ -74,77 +75,21 @@ class HomeScreen extends ConsumerWidget {
               showDialog(
                 context: context,
                 builder: (BuildContext dialogContext) {
-                  return AlertDialog(
-                    backgroundColor: AppColors.background,
-                    surfaceTintColor: Colors.transparent,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    title: Text(
-                      'Konfirmasi Keluar',
-                      style: AppTypography.headline1,
-                    ),
-                    content: Text(
-                      'Apakah Anda yakin ingin keluar dari sesi aplikasi saat ini?',
-                      style: AppTypography.body1Medium.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                    actions: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.surfaceGrey,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                elevation: 0,
-                              ),
-                              onPressed: () {
-                                Navigator.pop(dialogContext); // Tutup dialog
-                              },
-                              child: Text(
-                                'Batal',
-                                style: AppTypography.buttonText.copyWith(
-                                  color: AppColors.textSecondary,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primaryOrange,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                elevation: 0,
-                              ),
-                              onPressed: () {
-                                Navigator.pop(dialogContext); // Tutup dialog
-                                final authRepo = ref.read(
-                                  authRepositoryProvider,
-                                );
-                                context.go('/login'); // Pindah halaman
-                                Future.microtask(() async {
-                                  await authRepo
-                                      .signOut(); // Proses logout background
-                                });
-                              },
-                              child: Text(
-                                'Keluar',
-                                style: AppTypography.buttonText.copyWith(
-                                  color: AppColors.background,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                  return ConfirmationDialog(
+                    title: 'Konfirmasi Keluar',
+                    content:
+                        'Apakah Anda yakin ingin keluar dari sesi aplikasi saat ini?',
+                    cancelText: 'Batal',
+                    confirmText: 'Keluar',
+                    onCancel: () => Navigator.pop(dialogContext),
+                    onConfirm: () {
+                      Navigator.pop(dialogContext); // Tutup dialog
+                      final authRepo = ref.read(authRepositoryProvider);
+                      context.go('/login'); // Pindah halaman
+                      Future.microtask(() async {
+                        await authRepo.signOut(); // Proses logout background
+                      });
+                    },
                   );
                 },
               );

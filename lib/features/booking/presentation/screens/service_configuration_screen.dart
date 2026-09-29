@@ -189,8 +189,7 @@ class _ServiceConfigurationScreenState
                 text: 'Lanjut ke Jadwal Bengkel',
                 onPressed: isAllValid
                     ? () {
-                        // TODO: Navigate to schedule screen
-                        // context.push('/schedule');
+                        context.push('/schedule');
                       }
                     : null,
                 backgroundColor: isAllValid
