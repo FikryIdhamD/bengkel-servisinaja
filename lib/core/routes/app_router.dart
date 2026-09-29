@@ -21,9 +21,5 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
       // Tambahkan route lain sesuai kebutuhan PRD di sini
     ],
-    // redirect: (context, state) {
-    //   // TODO: Tambahkan logic proteksi rute di sini (cek sesi Supabase)
-    //   return null;
-    // },
   );
 });

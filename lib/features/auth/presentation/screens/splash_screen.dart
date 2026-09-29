@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/typography.dart';
 import '../../../../core/constants/assets.dart';
+import '../../../../core/widgets/app_logo.dart';
 import '../../logic/auth_controller.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
@@ -51,23 +52,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // Logo Monogram
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(25),
-                      child: Image.asset(
-                        AppAssets.logoMonogram,
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) {
-                          // Fallback sementara jika gambar gagal dimuat
-                          return const Icon(
-                            Icons.local_shipping_rounded,
-                            size: 100,
-                            color: AppColors.charcoalDark,
-                          );
-                        },
-                      ),
-                    ),
+                    const AppLogo(size: 100),
                     const SizedBox(height: 16),
                     // Teks Merek
                     Text(

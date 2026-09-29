@@ -4,10 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/typography.dart';
-import '../../../../core/constants/assets.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../../../../core/widgets/custom_text_field.dart';
 import '../../../../core/widgets/segmented_tab_control.dart';
+import '../../../../core/widgets/app_logo.dart';
 import '../../logic/auth_controller.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -139,19 +139,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 children: [
                   Row(
                     children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(6),
-                        child: Image.asset(
-                          AppAssets.logoMonogram,
-                          width: 24,
-                          height: 24,
-                          errorBuilder: (_, __, ___) =>
-                              const Icon(Icons.local_shipping, size: 24),
-                        ),
-                      ),
+                      const AppLogo(size: 24),
                       const SizedBox(width: 8),
                       Text(
-                        'Servisin Aja',
+                        'PitStop',
                         style: AppTypography.headline2.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
