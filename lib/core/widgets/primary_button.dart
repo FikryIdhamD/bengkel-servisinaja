@@ -8,12 +8,15 @@ class PrimaryButton extends StatelessWidget {
   final bool isLoading;
   final Color? backgroundColor;
 
+  final IconData? icon;
+
   const PrimaryButton({
     super.key,
     required this.text,
     this.onPressed,
     this.isLoading = false,
     this.backgroundColor,
+    this.icon,
   });
 
   @override
@@ -36,7 +39,16 @@ class PrimaryButton extends StatelessWidget {
                 color: AppColors.background,
               ),
             )
-          : Text(text, style: AppTypography.buttonText),
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (icon != null) ...[
+                  Icon(icon, size: 20, color: AppColors.background),
+                  const SizedBox(width: 8),
+                ],
+                Text(text, style: AppTypography.buttonText),
+              ],
+            ),
     );
   }
 }
