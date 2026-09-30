@@ -190,8 +190,11 @@ class _ScheduleWorkshopScreenState
                                       style: AppTypography.body2.copyWith(
                                         color: AppColors.textPrimary,
                                       ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
+                                  const SizedBox(width: 8),
                                   Text(
                                     scheduleState.selectedTimeSlot!,
                                     style: AppTypography.body2.copyWith(
@@ -206,9 +209,11 @@ class _ScheduleWorkshopScreenState
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                'Estimasi Total Durasi:',
-                                style: AppTypography.body1Medium,
+                              Expanded(
+                                child: Text(
+                                  'Estimasi Total Durasi:',
+                                  style: AppTypography.body1Medium,
+                                ),
                               ),
                               Text(
                                 '${summary.totalDurationMinutes} Menit',

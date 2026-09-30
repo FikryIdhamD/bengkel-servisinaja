@@ -7,6 +7,17 @@ final garageProvider = AsyncNotifierProvider<GarageNotifier, List<Vehicle>>(
   GarageNotifier.new,
 );
 
+final vehicleByIdProvider =
+    FutureProvider.family<Vehicle?, String>((ref, vehicleId) async {
+      final garageList = ref.watch(garageProvider).value;
+      if (garageList != null) {
+        final cached = garageList.where((v) => v.id == vehicleId).firstOrNull;
+        if (cached != null) return cached;
+      }
+      final repo = ref.read(vehicleRepositoryProvider);
+      return await repo.getVehicleById(vehicleId);
+    });
+
 class GarageNotifier extends AsyncNotifier<List<Vehicle>> {
   @override
   Future<List<Vehicle>> build() async {

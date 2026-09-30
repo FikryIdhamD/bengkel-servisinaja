@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/typography.dart';
 
-import '../../../../core/widgets/confirmation_dialog.dart';
 import '../../../auth/logic/auth_controller.dart';
 import '../../../garage/logic/garage_provider.dart';
 import '../../../../core/data/dummy_workshops.dart';
@@ -28,41 +27,59 @@ class HomeScreen extends ConsumerWidget {
         backgroundColor: AppColors.background,
         elevation: 0,
         scrolledUnderElevation: 0,
-        title: Row(
-          children: [
-            CircleAvatar(
-              backgroundColor: AppColors.primarySurface,
-              child: Text(
-                fullName.isNotEmpty ? fullName[0].toUpperCase() : 'U',
-                style: AppTypography.headline2.copyWith(
-                  color: AppColors.primaryOrange,
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+        title: InkWell(
+          onTap: () => context.go('/profile'),
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4.0),
+            child: Row(
               children: [
-                Text('Halo, $fullName', style: AppTypography.headline2),
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.verified,
-                      size: 14,
-                      color: AppColors.statusSuccess,
+                CircleAvatar(
+                  backgroundColor: AppColors.primarySurface,
+                  child: Text(
+                    fullName.isNotEmpty ? fullName[0].toUpperCase() : 'U',
+                    style: AppTypography.headline2.copyWith(
+                      color: AppColors.primaryOrange,
                     ),
-                    const SizedBox(width: 4),
-                    Text(
-                      'Akun Terverifikasi',
-                      style: AppTypography.caption.copyWith(
-                        color: AppColors.statusSuccess,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Halo, $fullName',
+                        style: AppTypography.headline2,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                  ],
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.verified,
+                            size: 14,
+                            color: AppColors.statusSuccess,
+                          ),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              'Akun Terverifikasi',
+                              style: AppTypography.caption.copyWith(
+                                color: AppColors.statusSuccess,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
-          ],
+          ),
         ),
         actions: [
           IconButton(

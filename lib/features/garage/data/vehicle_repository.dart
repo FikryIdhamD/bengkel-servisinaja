@@ -40,4 +40,19 @@ class VehicleRepository {
 
     return Vehicle.fromJson(response);
   }
+
+  Future<Vehicle?> getVehicleById(String vehicleId) async {
+    try {
+      final response = await supabase
+          .from('vehicles')
+          .select()
+          .eq('id', vehicleId)
+          .maybeSingle();
+
+      if (response == null) return null;
+      return Vehicle.fromJson(response);
+    } catch (_) {
+      return null;
+    }
+  }
 }

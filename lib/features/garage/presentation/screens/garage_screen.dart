@@ -5,7 +5,6 @@ import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/typography.dart';
 import '../../logic/garage_provider.dart';
 import 'widgets/add_vehicle_modal_sheet.dart';
-import '../../../../core/widgets/shimmer_loading.dart';
 
 class GarageScreen extends ConsumerWidget {
   const GarageScreen({super.key});

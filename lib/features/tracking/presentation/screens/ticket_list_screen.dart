@@ -100,12 +100,15 @@ class TicketListScreen extends ConsumerWidget {
                             Builder(
                               builder: (context) {
                                 Color statusColor = AppColors.textSecondary;
-                                if (status == 'Diproses')
+                                if (status == 'Diproses') {
                                   statusColor = AppColors.primaryOrange;
-                                if (status == 'Selesai')
+                                }
+                                if (status == 'Selesai') {
                                   statusColor = AppColors.statusSuccess;
-                                if (status == 'Dibatalkan')
+                                }
+                                if (status == 'Dibatalkan') {
                                   statusColor = AppColors.statusError;
+                                }
 
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,

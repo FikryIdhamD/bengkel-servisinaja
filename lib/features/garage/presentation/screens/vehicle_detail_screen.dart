@@ -87,19 +87,20 @@ class VehicleDetailScreen extends ConsumerWidget {
                                     ),
                                   ),
                                 ),
-                                const SizedBox(height: 16),
+                                const SizedBox(height: 12),
                                 Text(
                                   vehicle.modelName,
                                   style: AppTypography.headline1.copyWith(
                                     color: AppColors.charcoalDark,
-                                    fontSize: 24,
+                                    fontSize: 22,
                                   ),
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  'Tahun Pembuatan: ${vehicle.year}',
-                                  style: AppTypography.body2.copyWith(
-                                    color: Colors.white.withValues(alpha: 0.8),
+                                  vehicle.year.toString(),
+                                  style: AppTypography.headline2.copyWith(
+                                    color: AppColors.textSecondary,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ],

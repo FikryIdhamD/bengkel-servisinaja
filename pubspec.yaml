@@ -41,6 +41,24 @@ dependencies:
   flutter_dotenv: ^6.0.1
   intl: ^0.20.2
   shimmer: ^3.0.0
+  flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.7
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/logo_monogram.png"
+
+flutter_native_splash:
+  color: "#ffffff"
+  image: assets/images/servisinaja.png
+
+  android_gravity: center
+  ios_content_mode: center
+
+  android_12:
+    image: assets/images/servisinaja.png
+    color: "#ffffff"
 
 dev_dependencies:
   flutter_test:

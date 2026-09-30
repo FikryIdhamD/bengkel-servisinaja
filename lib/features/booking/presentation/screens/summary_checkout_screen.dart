@@ -173,7 +173,7 @@ class _SummaryCheckoutScreenState extends ConsumerState<SummaryCheckoutScreen> {
                     style: AppTypography.headline2,
                   ),
                   const SizedBox(height: 12),
-                  Container(
+                    Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: AppColors.primarySurface,
@@ -183,15 +183,40 @@ class _SummaryCheckoutScreenState extends ConsumerState<SummaryCheckoutScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Icon(
                               Icons.storefront,
                               color: AppColors.primaryOrange,
+                              size: 20,
                             ),
                             const SizedBox(width: 8),
-                            Text(
-                              schedule.selectedWorkshop?.name ?? '',
-                              style: AppTypography.body1Medium,
+                            Expanded(
+                              child: Text(
+                                schedule.selectedWorkshop?.name ?? '',
+                                style: AppTypography.body1Medium,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.calendar_month,
+                              color: AppColors.primaryOrange,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                schedule.selectedDate != null
+                                    ? DateFormat(
+                                        'EEEE, dd MMM yyyy',
+                                      ).format(schedule.selectedDate!)
+                                    : '',
+                                style: AppTypography.body2,
+                              ),
                             ),
                           ],
                         ),
@@ -199,27 +224,16 @@ class _SummaryCheckoutScreenState extends ConsumerState<SummaryCheckoutScreen> {
                         Row(
                           children: [
                             const Icon(
-                              Icons.calendar_month,
-                              color: AppColors.primaryOrange,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              schedule.selectedDate != null
-                                  ? DateFormat(
-                                      'EEEE, dd MMM yyyy',
-                                    ).format(schedule.selectedDate!)
-                                  : '',
-                              style: AppTypography.body2,
-                            ),
-                            const SizedBox(width: 16),
-                            const Icon(
                               Icons.access_time,
                               color: AppColors.primaryOrange,
+                              size: 20,
                             ),
                             const SizedBox(width: 8),
-                            Text(
-                              '${schedule.selectedTimeSlot} WIB',
-                              style: AppTypography.body2,
+                            Expanded(
+                              child: Text(
+                                '${schedule.selectedTimeSlot} WIB',
+                                style: AppTypography.body2,
+                              ),
                             ),
                           ],
                         ),
@@ -249,15 +263,22 @@ class _SummaryCheckoutScreenState extends ConsumerState<SummaryCheckoutScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                'Unit $unitNum - ${vehicle.plateNumber}',
-                                style: AppTypography.body1Medium.copyWith(
-                                  color: AppColors.primaryOrange,
+                              Expanded(
+                                child: Text(
+                                  'Unit $unitNum - ${vehicle.plateNumber}',
+                                  style: AppTypography.body1Medium.copyWith(
+                                    color: AppColors.primaryOrange,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
+                              const SizedBox(width: 8),
                               Text(
-                                vehicle.modelName,
+                                '${vehicle.modelName} (${vehicle.year})',
                                 style: AppTypography.caption,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ],
                           ),
@@ -439,7 +460,9 @@ class _SummaryCheckoutScreenState extends ConsumerState<SummaryCheckoutScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Subtotal Jasa', style: AppTypography.body2),
+                      Expanded(
+                        child: Text('Subtotal Jasa', style: AppTypography.body2),
+                      ),
                       Text(
                         currencyFormat.format(summary.totalServicePrice),
                         style: AppTypography.body1Medium,
@@ -450,7 +473,12 @@ class _SummaryCheckoutScreenState extends ConsumerState<SummaryCheckoutScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Subtotal Suku Cadang', style: AppTypography.body2),
+                      Expanded(
+                        child: Text(
+                          'Subtotal Suku Cadang',
+                          style: AppTypography.body2,
+                        ),
+                      ),
                       Text(
                         currencyFormat.format(summary.totalPartsPrice),
                         style: AppTypography.body1Medium,
@@ -461,7 +489,12 @@ class _SummaryCheckoutScreenState extends ConsumerState<SummaryCheckoutScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Grand Total', style: AppTypography.headline2),
+                      Expanded(
+                        child: Text(
+                          'Grand Total',
+                          style: AppTypography.headline2,
+                        ),
+                      ),
                       Text(
                         currencyFormat.format(summary.grandTotal),
                         style: AppTypography.headline1.copyWith(

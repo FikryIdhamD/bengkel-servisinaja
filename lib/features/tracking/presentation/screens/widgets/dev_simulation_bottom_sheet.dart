@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/constants/colors.dart';
 import '../../../../../core/constants/typography.dart';
+import '../../../../garage/logic/garage_provider.dart';
 import '../../../logic/dev_simulation_controller.dart';
 import '../../../logic/tracking_stream_provider.dart';
 
@@ -78,6 +79,11 @@ class _SimulationItemCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final status = item['status'] ?? 'PENDING';
     final itemId = item['id'].toString();
+    final vehicles = ref.watch(garageProvider).value ?? [];
+    final vehicle = vehicles.where((v) => v.id == item['vehicle_id']).firstOrNull;
+    final vehicleTitle = vehicle != null
+        ? '${vehicle.modelName} (${vehicle.plateNumber})'
+        : 'Kendaraan ID: ${item['vehicle_id']}';
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -90,7 +96,7 @@ class _SimulationItemCard extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Kendaraan ID: ${item['vehicle_id']}',
+              vehicleTitle,
               style: AppTypography.body1Medium,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

@@ -10,10 +10,10 @@ class AppLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Rasio kelengkungan selalu 25% dari ukurannya agar konsisten proporsional
-    final calculatedRadius = size * 0.25;
+    // final calculatedRadius = size * 0.25;
 
     return ClipRRect(
-      borderRadius: BorderRadius.circular(calculatedRadius),
+      // borderRadius: BorderRadius.circular(calculatedRadius),
       child: Image.asset(
         AppAssets.logoMonogram,
         width: size,
