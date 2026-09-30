@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/constants/colors.dart';
 import '../../../../../core/constants/typography.dart';
+import '../../../../garage/data/vehicle_repository.dart';
 import '../../../../garage/logic/garage_provider.dart';
 import '../../../logic/dev_simulation_controller.dart';
 import '../../../logic/tracking_stream_provider.dart';
@@ -9,12 +10,14 @@ import '../../../logic/tracking_stream_provider.dart';
 class DevSimulationBottomSheet extends ConsumerWidget {
   final String bookingId;
 
-  const DevSimulationBottomSheet({Key? key, required this.bookingId})
-    : super(key: key);
+  const DevSimulationBottomSheet({super.key, required this.bookingId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final itemsAsyncValue = ref.watch(bookingItemsStreamProvider(bookingId));
+    final bookingAsyncValue = ref.watch(bookingStreamProvider(bookingId));
+    final fallbackSimulatedStatus =
+        ref.watch(fallbackItemStatusProvider)[bookingId];
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -49,14 +52,49 @@ class DevSimulationBottomSheet extends ConsumerWidget {
           Expanded(
             child: itemsAsyncValue.when(
               data: (items) {
-                if (items.isEmpty) {
-                  return const Center(child: Text('Tidak ada kendaraan.'));
+                final deletedCached = ref
+                    .read(vehicleRepositoryProvider)
+                    .getDeletedBookingItems(bookingId);
+                final effectiveItems = <Map<String, dynamic>>[...items];
+                for (final cached in deletedCached) {
+                  final cachedId = cached['id']?.toString();
+                  if (cachedId != null &&
+                      !effectiveItems.any((m) => m['id']?.toString() == cachedId)) {
+                    effectiveItems.add(cached);
+                  }
                 }
+
+                if (effectiveItems.isEmpty) {
+                  final bookingStatus =
+                      bookingAsyncValue.value?['status']?.toString() ??
+                          'Menunggu Kedatangan';
+                  String defaultStatus;
+                  if (fallbackSimulatedStatus != null) {
+                    defaultStatus = fallbackSimulatedStatus;
+                  } else if (bookingStatus == 'Selesai') {
+                    defaultStatus = 'Selesai';
+                  } else if (bookingStatus == 'Diproses') {
+                    defaultStatus = 'Sedang Dikerjakan';
+                  } else {
+                    defaultStatus = 'Menunggu Antrean';
+                  }
+                  effectiveItems.add({
+                    'id': 'deleted-$bookingId',
+                    'booking_id': bookingId,
+                    'vehicle_id': null,
+                    'status': defaultStatus,
+                  });
+                }
+
                 return ListView.builder(
-                  itemCount: items.length,
+                  itemCount: effectiveItems.length,
                   itemBuilder: (context, index) {
-                    final item = items[index];
-                    return _SimulationItemCard(item: item);
+                    final item = effectiveItems[index];
+                    return _SimulationItemCard(
+                      bookingId: bookingId,
+                      item: item,
+                      index: index,
+                    );
                   },
                 );
               },
@@ -71,19 +109,29 @@ class DevSimulationBottomSheet extends ConsumerWidget {
 }
 
 class _SimulationItemCard extends ConsumerWidget {
+  final String bookingId;
   final Map<String, dynamic> item;
+  final int index;
 
-  const _SimulationItemCard({required this.item});
+  const _SimulationItemCard({
+    required this.bookingId,
+    required this.item,
+    required this.index,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final status = item['status'] ?? 'PENDING';
     final itemId = item['id'].toString();
+    final vehicleId = item['vehicle_id']?.toString();
     final vehicles = ref.watch(garageProvider).value ?? [];
-    final vehicle = vehicles.where((v) => v.id == item['vehicle_id']).firstOrNull;
-    final vehicleTitle = vehicle != null
-        ? '${vehicle.modelName} (${vehicle.plateNumber})'
-        : 'Kendaraan ID: ${item['vehicle_id']}';
+    final activeVehicle =
+        vehicles.where((v) => v.id == vehicleId).firstOrNull;
+
+    final isDeleted = activeVehicle == null;
+    final vehicleTitle = !isDeleted
+        ? '${activeVehicle.modelName} (${activeVehicle.plateNumber})'
+        : 'Kendaraan Dihapus (Plat Dihapus)';
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -97,7 +145,11 @@ class _SimulationItemCard extends ConsumerWidget {
           children: [
             Text(
               vehicleTitle,
-              style: AppTypography.body1Medium,
+              style: AppTypography.body1Medium.copyWith(
+                color: isDeleted
+                    ? AppColors.statusError
+                    : AppColors.charcoalDark,
+              ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -110,36 +162,44 @@ class _SimulationItemCard extends ConsumerWidget {
                   title: 'Antre',
                   isActive: status == 'Menunggu Antrean',
                   onTap: () {
-                    ref
-                        .read(devSimulationControllerProvider)
-                        .updateItemStatus(itemId, 'Menunggu Antrean');
+                    ref.read(devSimulationControllerProvider).updateItemStatus(
+                          itemId,
+                          'Menunggu Antrean',
+                          bookingId: bookingId,
+                        );
                   },
                 ),
                 _StatusButton(
                   title: 'Dikerjakan',
                   isActive: status == 'Sedang Dikerjakan',
                   onTap: () {
-                    ref
-                        .read(devSimulationControllerProvider)
-                        .updateItemStatus(itemId, 'Sedang Dikerjakan');
+                    ref.read(devSimulationControllerProvider).updateItemStatus(
+                          itemId,
+                          'Sedang Dikerjakan',
+                          bookingId: bookingId,
+                        );
                   },
                 ),
                 _StatusButton(
                   title: 'Pengecekan',
                   isActive: status == 'Pengecekan Akhir',
                   onTap: () {
-                    ref
-                        .read(devSimulationControllerProvider)
-                        .updateItemStatus(itemId, 'Pengecekan Akhir');
+                    ref.read(devSimulationControllerProvider).updateItemStatus(
+                          itemId,
+                          'Pengecekan Akhir',
+                          bookingId: bookingId,
+                        );
                   },
                 ),
                 _StatusButton(
                   title: 'Selesai',
                   isActive: status == 'Selesai',
                   onTap: () {
-                    ref
-                        .read(devSimulationControllerProvider)
-                        .updateItemStatus(itemId, 'Selesai');
+                    ref.read(devSimulationControllerProvider).updateItemStatus(
+                          itemId,
+                          'Selesai',
+                          bookingId: bookingId,
+                        );
                   },
                 ),
               ],

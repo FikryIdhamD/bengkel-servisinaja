@@ -13,8 +13,14 @@ class SparePart {
   final String id;
   final String name;
   final double price;
+  final String category;
 
-  const SparePart(this.id, this.name, this.price);
+  const SparePart(
+    this.id,
+    this.name,
+    this.price, {
+    this.category = 'Suku Cadang',
+  });
 }
 
 const defaultServicePackages = [
@@ -26,11 +32,31 @@ const defaultServicePackages = [
 ];
 
 const defaultSpareParts = [
-  SparePart('PART_1', 'Oli Mesin MPX 2 (0.8L)', 54000),
-  SparePart('PART_2', 'Oli Sintetik SPX 2 (0.8L)', 67000),
-  SparePart('PART_3', 'Oli Gardan Scooter (120ml)', 18000),
-  SparePart('PART_4', 'Busi Standar NGK / Denso', 25000),
-  SparePart('PART_5', 'Kampas Rem Cakram / Tromol', 45000),
+  SparePart('PART_1', 'Oli Mesin MPX 2 (0.8L)', 54000, category: 'Oli Mesin'),
+  SparePart(
+    'PART_2',
+    'Oli Sintetik SPX 2 (0.8L)',
+    67000,
+    category: 'Oli Mesin',
+  ),
+  SparePart(
+    'PART_3',
+    'Oli Gardan Scooter (120ml)',
+    18000,
+    category: 'Oli Gardan',
+  ),
+  SparePart(
+    'PART_4',
+    'Busi Standar NGK / Denso',
+    25000,
+    category: 'Kelistrikan & Busi',
+  ),
+  SparePart(
+    'PART_5',
+    'Kampas Rem Cakram / Tromol',
+    45000,
+    category: 'Pengereman',
+  ),
 ];
 
 class VehicleConfigDraft {
@@ -85,6 +111,20 @@ class ServiceConfigurationNotifier
     } else {
       parts.add(part);
     }
+    state = {...state, vehicleId: current.copyWith(selectedParts: parts)};
+  }
+
+  void setParts(String vehicleId, List<SparePart> parts) {
+    final current = state[vehicleId] ?? const VehicleConfigDraft();
+    state = {
+      ...state,
+      vehicleId: current.copyWith(selectedParts: List<SparePart>.from(parts)),
+    };
+  }
+
+  void removePart(String vehicleId, String partId) {
+    final current = state[vehicleId] ?? const VehicleConfigDraft();
+    final parts = current.selectedParts.where((p) => p.id != partId).toList();
     state = {...state, vehicleId: current.copyWith(selectedParts: parts)};
   }
 

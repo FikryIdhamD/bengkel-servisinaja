@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/typography.dart';
 import '../../../../core/widgets/primary_button.dart';
@@ -8,6 +9,7 @@ import '../../../../core/widgets/custom_text_field.dart';
 import '../../../../core/widgets/sticky_unit_switcher.dart';
 import '../../logic/multi_vehicle_selection_provider.dart';
 import '../../logic/service_configuration_provider.dart';
+import 'spare_part_selection_screen.dart';
 
 class ServiceConfigurationScreen extends ConsumerStatefulWidget {
   const ServiceConfigurationScreen({super.key});
@@ -35,6 +37,11 @@ class _ServiceConfigurationScreenState
   Widget build(BuildContext context) {
     final selectedVehicles = ref.watch(selectedVehiclesProvider);
     final configState = ref.watch(serviceConfigurationProvider);
+    final currencyFormat = NumberFormat.currency(
+      locale: 'id_ID',
+      symbol: 'Rp ',
+      decimalDigits: 0,
+    );
 
     if (selectedVehicles.isEmpty) {
       return const Scaffold(
@@ -119,6 +126,7 @@ class _ServiceConfigurationScreenState
                     return _buildPackageCard(
                       package: pkg,
                       isSelected: isSelected,
+                      currencyFormat: currencyFormat,
                       onTap: () {
                         ref
                             .read(serviceConfigurationProvider.notifier)
@@ -133,20 +141,142 @@ class _ServiceConfigurationScreenState
                     style: AppTypography.headline2,
                   ),
                   const SizedBox(height: 12),
-                  ...defaultSpareParts.map((part) {
-                    final isSelected = activeConfig.selectedParts.any(
-                      (p) => p.id == part.id,
-                    );
-                    return _buildPartCheckbox(
-                      part: part,
-                      isSelected: isSelected,
-                      onChanged: (val) {
-                        ref
-                            .read(serviceConfigurationProvider.notifier)
-                            .togglePart(activeVehicle.id, part);
-                      },
-                    );
-                  }),
+
+                  // List suku cadang terpilih di atas tombol +
+                  if (activeConfig.selectedParts.isNotEmpty) ...[
+                    ...activeConfig.selectedParts.map((part) {
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 10),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 12,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.primarySurface,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: AppColors.primaryOrange.withValues(
+                              alpha: 0.4,
+                            ),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Icon(
+                                Icons.oil_barrel_outlined,
+                                color: AppColors.primaryOrange,
+                                size: 20,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    part.name,
+                                    style: AppTypography.body1Medium.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    currencyFormat.format(part.price),
+                                    style: AppTypography.caption.copyWith(
+                                      color: AppColors.primaryOrange,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            IconButton(
+                              tooltip: 'Hapus item',
+                              icon: const Icon(
+                                Icons.close,
+                                size: 18,
+                                color: AppColors.textSecondary,
+                              ),
+                              visualDensity: VisualDensity.compact,
+                              onPressed: () {
+                                ref
+                                    .read(serviceConfigurationProvider.notifier)
+                                    .removePart(activeVehicle.id, part.id);
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
+                    const SizedBox(height: 4),
+                  ],
+
+                  // Tombol + Tambah Suku Cadang & Pelumas
+                  InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SparePartSelectionScreen(
+                            vehicleId: activeVehicle.id,
+                            vehicleName:
+                                'Unit ${_activeUnitIndex + 1}: ${activeVehicle.modelName} (${activeVehicle.plateNumber})',
+                          ),
+                        ),
+                      );
+                    },
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 14,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceGrey,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: AppColors.primaryOrange,
+                          width: 1.2,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: const BoxDecoration(
+                              color: AppColors.primaryOrange,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.add,
+                              size: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Flexible(
+                            child: Text(
+                              activeConfig.selectedParts.isEmpty
+                                  ? 'Tambah Suku Cadang & Pelumas'
+                                  : 'Tambah / Ubah Suku Cadang & Pelumas',
+                              style: AppTypography.buttonText.copyWith(
+                                color: AppColors.primaryOrange,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
 
                   const SizedBox(height: 24),
                   Text(
@@ -206,6 +336,7 @@ class _ServiceConfigurationScreenState
   Widget _buildPackageCard({
     required ServicePackage package,
     required bool isSelected,
+    required NumberFormat currencyFormat,
     required VoidCallback onTap,
   }) {
     return GestureDetector(
@@ -237,7 +368,7 @@ class _ServiceConfigurationScreenState
               ),
             ),
             Text(
-              'Rp ${package.price.toInt()}',
+              currencyFormat.format(package.price),
               style: AppTypography.body1Medium.copyWith(
                 color: AppColors.primaryOrange,
                 fontWeight: FontWeight.bold,
@@ -246,26 +377,6 @@ class _ServiceConfigurationScreenState
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildPartCheckbox({
-    required SparePart part,
-    required bool isSelected,
-    required ValueChanged<bool?> onChanged,
-  }) {
-    return CheckboxListTile(
-      value: isSelected,
-      onChanged: onChanged,
-      title: Text(part.name, style: AppTypography.body1Medium),
-      subtitle: Text(
-        'Rp ${part.price.toInt()}',
-        style: AppTypography.body2.copyWith(color: AppColors.primaryOrange),
-      ),
-      activeColor: AppColors.primaryOrange,
-      contentPadding: EdgeInsets.zero,
-      controlAffinity: ListTileControlAffinity.leading,
-      dense: true,
     );
   }
 }

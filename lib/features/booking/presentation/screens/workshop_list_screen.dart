@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/typography.dart';
 import '../../../../core/data/dummy_workshops.dart';
+import '../../../tracking/logic/tracking_stream_provider.dart';
 
-class WorkshopListScreen extends StatelessWidget {
+class WorkshopListScreen extends ConsumerWidget {
   const WorkshopListScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ratingsMap = ref.watch(workshopRatingsProvider).value ?? {};
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -32,6 +36,12 @@ class WorkshopListScreen extends StatelessWidget {
         separatorBuilder: (context, index) => const SizedBox(height: 16),
         itemBuilder: (context, index) {
           final workshop = defaultWorkshops[index];
+          final liveStats = ratingsMap[workshop.name];
+          final displayRating =
+              (liveStats?['rating'] as num?)?.toDouble() ?? workshop.rating;
+          final displayCount =
+              (liveStats?['count'] as num?)?.toInt() ?? workshop.reviewCount;
+
           return GestureDetector(
             onTap: () {
               context.push('/workshop/${workshop.id}');
@@ -79,12 +89,27 @@ class WorkshopListScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          workshop.address,
+                          '${workshop.address}, ${workshop.city}',
                           style: AppTypography.body2.copyWith(
                             color: AppColors.textSecondary,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 6),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.star,
+                              size: 14,
+                              color: AppColors.primaryOrange,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${displayRating.toStringAsFixed(1)} ($displayCount Ulasan)',
+                              style: AppTypography.caption,
+                            ),
+                          ],
                         ),
                       ],
                     ),

@@ -3,13 +3,54 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/typography.dart';
+import '../../../../core/widgets/confirmation_dialog.dart';
 import '../../../../core/widgets/shimmer_loading.dart';
+import '../../../booking/logic/multi_vehicle_selection_provider.dart';
+import '../../data/models/vehicle_model.dart';
 import '../../logic/garage_provider.dart';
+import 'widgets/add_vehicle_modal_sheet.dart';
 
 class VehicleDetailScreen extends ConsumerWidget {
   final String vehicleId;
 
   const VehicleDetailScreen({super.key, required this.vehicleId});
+
+  Future<void> _confirmDelete(
+    BuildContext context,
+    WidgetRef ref,
+    Vehicle vehicle,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => ConfirmationDialog(
+        title: 'Hapus Kendaraan?',
+        content:
+            'Apakah Anda yakin ingin menghapus ${vehicle.modelName} (${vehicle.plateNumber}) dari garasi? Riwayat tiket servis lama akan tetap tersimpan.',
+        cancelText: 'Batal',
+        confirmText: 'Ya, Hapus',
+        confirmColor: AppColors.statusError,
+        onCancel: () => Navigator.pop(ctx, false),
+        onConfirm: () => Navigator.pop(ctx, true),
+      ),
+    );
+
+    if (confirmed == true) {
+      final selected = ref.read(selectedVehiclesProvider);
+      if (selected.any((s) => s.id == vehicle.id)) {
+        ref.read(selectedVehiclesProvider.notifier).toggleVehicle(vehicle);
+      }
+      await ref.read(garageProvider.notifier).deleteVehicle(vehicle);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${vehicle.modelName} berhasil dihapus dari garasi'),
+            backgroundColor: AppColors.statusSuccess,
+          ),
+        );
+        context.pop();
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -34,10 +75,15 @@ class VehicleDetailScreen extends ConsumerWidget {
       ),
       body: garageState.when(
         data: (vehicles) {
-          final vehicle = vehicles.firstWhere(
-            (v) => v.id == vehicleId,
-            orElse: () => vehicles.first,
-          );
+          final vehicle = vehicles.where((v) => v.id == vehicleId).firstOrNull;
+          if (vehicle == null) {
+            return Center(
+              child: Text(
+                'Kendaraan tidak ditemukan atau telah dihapus.',
+                style: AppTypography.body2,
+              ),
+            );
+          }
 
           return SingleChildScrollView(
             padding: const EdgeInsets.all(20),
@@ -116,6 +162,75 @@ class VehicleDetailScreen extends ConsumerWidget {
                               Icons.two_wheeler,
                               color: AppColors.primaryOrange,
                               size: 40,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const Divider(height: 28),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(
+                                  color: AppColors.primaryOrange,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
+                              ),
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AddVehicleModalSheet(
+                                    ref: ref,
+                                    vehicleToEdit: vehicle,
+                                  ),
+                                );
+                              },
+                              icon: const Icon(
+                                Icons.edit_outlined,
+                                size: 18,
+                                color: AppColors.primaryOrange,
+                              ),
+                              label: Text(
+                                'Edit Kendaraan',
+                                style: AppTypography.buttonText.copyWith(
+                                  color: AppColors.primaryOrange,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(
+                                  color: AppColors.statusError,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
+                              ),
+                              onPressed: () =>
+                                  _confirmDelete(context, ref, vehicle),
+                              icon: const Icon(
+                                Icons.delete_outline,
+                                size: 18,
+                                color: AppColors.statusError,
+                              ),
+                              label: Text(
+                                'Hapus',
+                                style: AppTypography.buttonText.copyWith(
+                                  color: AppColors.statusError,
+                                ),
+                              ),
                             ),
                           ),
                         ],

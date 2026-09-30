@@ -91,6 +91,18 @@ class TicketListScreen extends ConsumerWidget {
                               booking['booking_code'] ?? 'PSA-UNKNOWN',
                               style: AppTypography.body1Medium,
                             ),
+                            if (booking['workshop_name'] != null) ...[
+                              const SizedBox(height: 2),
+                              Text(
+                                booking['workshop_name'].toString(),
+                                style: AppTypography.caption.copyWith(
+                                  color: AppColors.charcoalDark,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
                             const SizedBox(height: 4),
                             Text(
                               '$dateFormatted • $timeSlot',
@@ -110,8 +122,13 @@ class TicketListScreen extends ConsumerWidget {
                                   statusColor = AppColors.statusError;
                                 }
 
-                                return Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                final rating =
+                                    (booking['rating'] as num?)?.toInt();
+
+                                return Wrap(
+                                  spacing: 8,
+                                  runSpacing: 6,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
                                   children: [
                                     Container(
                                       padding: const EdgeInsets.symmetric(
@@ -132,7 +149,38 @@ class TicketListScreen extends ConsumerWidget {
                                         ),
                                       ),
                                     ),
-
+                                    if (status == 'Selesai')
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                          vertical: 4,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: AppColors.primarySurface,
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const Icon(
+                                              Icons.star_rounded,
+                                              size: 14,
+                                              color: AppColors.primaryOrange,
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              rating != null
+                                                  ? '$rating.0'
+                                                  : 'Beri Rating',
+                                              style:
+                                                  AppTypography.caption.copyWith(
+                                                color: AppColors.primaryOrange,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                   ],
                                 );
                               },

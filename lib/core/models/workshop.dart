@@ -9,6 +9,8 @@ class Workshop {
   final String phoneNumber;
   final String openingHours;
   final double distanceKm;
+  final double rating;
+  final int reviewCount;
 
   const Workshop(
     this.id,
@@ -21,5 +23,7 @@ class Workshop {
     this.phoneNumber = '0812-3456-7890',
     this.openingHours = '08:00 - 17:00',
     this.distanceKm = 5.0,
+    this.rating = 4.8,
+    this.reviewCount = 120,
   });
 }

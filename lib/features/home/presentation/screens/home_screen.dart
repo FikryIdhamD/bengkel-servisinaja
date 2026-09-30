@@ -6,6 +6,7 @@ import '../../../../core/constants/typography.dart';
 
 import '../../../auth/logic/auth_controller.dart';
 import '../../../garage/logic/garage_provider.dart';
+import '../../../tracking/logic/tracking_stream_provider.dart';
 import '../../../../core/data/dummy_workshops.dart';
 import '../../../../core/widgets/shimmer_loading.dart';
 import '../../../../core/widgets/promo_carousel.dart';
@@ -20,6 +21,7 @@ class HomeScreen extends ConsumerWidget {
     final fullName = user?.userMetadata?['full_name'] ?? 'Pengguna';
 
     final garageState = ref.watch(garageProvider);
+    final ratingsMap = ref.watch(workshopRatingsProvider).value ?? {};
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -311,6 +313,13 @@ class HomeScreen extends ConsumerWidget {
                     .where((w) => w.city.toLowerCase().contains('jakarta'))
                     .take(3)
                     .map((workshop) {
+                      final liveStats = ratingsMap[workshop.name];
+                      final displayRating =
+                          (liveStats?['rating'] as num?)?.toDouble() ??
+                              workshop.rating;
+                      final displayCount =
+                          (liveStats?['count'] as num?)?.toInt() ??
+                              workshop.reviewCount;
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 12.0),
                         child: GestureDetector(
@@ -386,7 +395,7 @@ class HomeScreen extends ConsumerWidget {
                                           ),
                                           const SizedBox(width: 4),
                                           Text(
-                                            '4.8 (120 Ulasan)',
+                                            '${displayRating.toStringAsFixed(1)} ($displayCount Ulasan)',
                                             style: AppTypography.caption,
                                           ),
                                         ],

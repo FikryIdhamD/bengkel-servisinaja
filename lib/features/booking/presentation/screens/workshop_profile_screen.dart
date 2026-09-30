@@ -6,6 +6,7 @@ import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/typography.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../../../../core/data/dummy_workshops.dart';
+import '../../../tracking/logic/tracking_stream_provider.dart';
 
 class WorkshopProfileScreen extends ConsumerWidget {
   final String workshopId;
@@ -14,11 +15,16 @@ class WorkshopProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Find workshop from default list for now (replace with Supabase fetch later)
     final workshop = defaultWorkshops.firstWhere(
       (w) => w.id == workshopId,
       orElse: () => defaultWorkshops.first,
     );
+    final ratingsMap = ref.watch(workshopRatingsProvider).value ?? {};
+    final liveStats = ratingsMap[workshop.name];
+    final displayRating =
+        (liveStats?['rating'] as num?)?.toDouble() ?? workshop.rating;
+    final displayCount =
+        (liveStats?['count'] as num?)?.toInt() ?? workshop.reviewCount;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -69,7 +75,7 @@ class WorkshopProfileScreen extends ConsumerWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        '4.8 (120 Ulasan)',
+                        '${displayRating.toStringAsFixed(1)} ($displayCount Ulasan)',
                         style: AppTypography.body1Medium,
                       ),
                     ],

@@ -3,11 +3,61 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/typography.dart';
+import '../../../../core/widgets/confirmation_dialog.dart';
+import '../../../booking/logic/multi_vehicle_selection_provider.dart';
+import '../../data/models/vehicle_model.dart';
 import '../../logic/garage_provider.dart';
 import 'widgets/add_vehicle_modal_sheet.dart';
 
 class GarageScreen extends ConsumerWidget {
   const GarageScreen({super.key});
+
+  Future<void> _confirmDeleteVehicle(
+    BuildContext context,
+    WidgetRef ref,
+    Vehicle vehicle,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => ConfirmationDialog(
+        title: 'Hapus Kendaraan?',
+        content:
+            'Apakah Anda yakin ingin menghapus ${vehicle.modelName} (${vehicle.plateNumber}) dari garasi? Riwayat tiket servis lama akan tetap tersimpan.',
+        cancelText: 'Batal',
+        confirmText: 'Ya, Hapus',
+        confirmColor: AppColors.statusError,
+        onCancel: () => Navigator.pop(ctx, false),
+        onConfirm: () => Navigator.pop(ctx, true),
+      ),
+    );
+
+    if (confirmed == true) {
+      try {
+        final selected = ref.read(selectedVehiclesProvider);
+        if (selected.any((s) => s.id == vehicle.id)) {
+          ref.read(selectedVehiclesProvider.notifier).toggleVehicle(vehicle);
+        }
+        await ref.read(garageProvider.notifier).deleteVehicle(vehicle);
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('${vehicle.modelName} berhasil dihapus dari garasi'),
+              backgroundColor: AppColors.statusSuccess,
+            ),
+          );
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Gagal menghapus kendaraan: $e'),
+              backgroundColor: AppColors.statusError,
+            ),
+          );
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -39,10 +89,8 @@ class GarageScreen extends ConsumerWidget {
                     ),
                   ),
                   onPressed: () {
-                    showModalBottomSheet(
+                    showDialog(
                       context: context,
-                      isScrollControlled: true,
-                      backgroundColor: Colors.transparent,
                       builder: (context) => AddVehicleModalSheet(ref: ref),
                     );
                   },
@@ -147,9 +195,44 @@ class GarageScreen extends ConsumerWidget {
                                     Text(
                                       '${v.modelName} (${v.year})',
                                       style: AppTypography.headline2,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ],
                                 ),
+                              ),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    tooltip: 'Edit Kendaraan',
+                                    icon: const Icon(
+                                      Icons.edit_outlined,
+                                      color: AppColors.primaryOrange,
+                                      size: 20,
+                                    ),
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) =>
+                                            AddVehicleModalSheet(
+                                          ref: ref,
+                                          vehicleToEdit: v,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                  IconButton(
+                                    tooltip: 'Hapus Kendaraan',
+                                    icon: const Icon(
+                                      Icons.delete_outline,
+                                      color: AppColors.statusError,
+                                      size: 20,
+                                    ),
+                                    onPressed: () =>
+                                        _confirmDeleteVehicle(context, ref, v),
+                                  ),
+                                ],
                               ),
                             ],
                           ),

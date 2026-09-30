@@ -24,3 +24,10 @@ final bookingFutureProvider =
       final repo = ref.watch(trackingRepositoryProvider);
       return await repo.getBooking(bookingId);
     });
+
+final workshopRatingsProvider =
+    FutureProvider<Map<String, Map<String, dynamic>>>((ref) async {
+      final repo = ref.watch(trackingRepositoryProvider);
+      return await repo.getWorkshopRatingsMap();
+    });
+
