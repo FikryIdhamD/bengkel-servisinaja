@@ -5,6 +5,7 @@ import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/typography.dart';
 import '../../../auth/logic/auth_controller.dart';
 import '../../../../core/widgets/confirmation_dialog.dart';
+import '../../../../core/widgets/app_notification.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -59,12 +60,9 @@ class ProfileScreen extends ConsumerWidget {
                       const SizedBox(height: 8),
                       OutlinedButton(
                         onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                'Fitur edit profil akan segera hadir',
-                              ),
-                            ),
+                          AppNotification.showWarning(
+                            context,
+                            'Fitur edit profil akan segera hadir',
                           );
                         },
                         style: OutlinedButton.styleFrom(

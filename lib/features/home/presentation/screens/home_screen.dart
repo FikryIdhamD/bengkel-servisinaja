@@ -147,7 +147,7 @@ class HomeScreen extends ConsumerWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 16),
 
               // Garasi Saya
               Row(
@@ -167,7 +167,7 @@ class HomeScreen extends ConsumerWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 6),
 
               // Daftar Motor
               garageState.when(
@@ -288,7 +288,7 @@ class HomeScreen extends ConsumerWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 16),
               // Bengkel Terdekat
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -307,7 +307,7 @@ class HomeScreen extends ConsumerWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 6),
               Column(
                 children: defaultWorkshops
                     .where((w) => w.city.toLowerCase().contains('jakarta'))
@@ -316,10 +316,10 @@ class HomeScreen extends ConsumerWidget {
                       final liveStats = ratingsMap[workshop.name];
                       final displayRating =
                           (liveStats?['rating'] as num?)?.toDouble() ??
-                              workshop.rating;
+                          workshop.rating;
                       final displayCount =
                           (liveStats?['count'] as num?)?.toInt() ??
-                              workshop.reviewCount;
+                          workshop.reviewCount;
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 12.0),
                         child: GestureDetector(

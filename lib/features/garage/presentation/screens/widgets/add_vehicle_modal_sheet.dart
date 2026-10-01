@@ -4,6 +4,7 @@ import '../../../../../core/constants/colors.dart';
 import '../../../../../core/constants/typography.dart';
 import '../../../../../core/widgets/custom_text_field.dart';
 import '../../../../../core/widgets/primary_button.dart';
+import '../../../../../core/widgets/app_notification.dart';
 import '../../../data/models/vehicle_model.dart';
 import '../../../logic/garage_provider.dart';
 
@@ -54,8 +55,9 @@ class _AddVehicleModalSheetState extends State<AddVehicleModalSheet> {
     final year = int.tryParse(_yearController.text.trim()) ?? 0;
 
     if (plate.isEmpty || model.isEmpty || year == 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Mohon lengkapi semua data dengan benar')),
+      AppNotification.showWarning(
+        context,
+        'Mohon lengkapi semua data dengan benar',
       );
       return;
     }
@@ -75,28 +77,20 @@ class _AddVehicleModalSheetState extends State<AddVehicleModalSheet> {
 
       if (mounted) {
         Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              _isEditMode
-                  ? 'Data kendaraan berhasil diperbarui'
-                  : 'Motor berhasil ditambahkan ke Garasi',
-            ),
-            backgroundColor: AppColors.statusSuccess,
-          ),
+        AppNotification.showSuccess(
+          context,
+          _isEditMode
+              ? 'Data kendaraan berhasil diperbarui'
+              : 'Motor berhasil ditambahkan ke Garasi',
         );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              _isEditMode
-                  ? 'Gagal memperbarui motor: $e'
-                  : 'Gagal menambahkan motor: $e',
-            ),
-            backgroundColor: AppColors.statusError,
-          ),
+        AppNotification.showError(
+          context,
+          _isEditMode
+              ? 'Gagal memperbarui motor: $e'
+              : 'Gagal menambahkan motor: $e',
         );
       }
     } finally {

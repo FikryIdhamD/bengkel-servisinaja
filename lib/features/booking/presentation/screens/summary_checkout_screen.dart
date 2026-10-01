@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/typography.dart';
 import '../../../../core/widgets/primary_button.dart';
+import '../../../../core/widgets/app_notification.dart';
 import '../../../auth/logic/auth_controller.dart';
 import '../../data/booking_repository.dart';
 import '../../logic/multi_vehicle_selection_provider.dart';
@@ -117,9 +118,10 @@ class _SummaryCheckoutScreenState extends ConsumerState<SummaryCheckoutScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
+        AppNotification.showError(
           context,
-        ).showSnackBar(SnackBar(content: Text('Gagal membuat pesanan: $e')));
+          'Gagal membuat pesanan: $e',
+        );
       }
     } finally {
       if (mounted) {

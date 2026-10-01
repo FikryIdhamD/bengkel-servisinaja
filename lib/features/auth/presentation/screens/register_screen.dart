@@ -5,6 +5,7 @@ import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/typography.dart';
 import '../../../../core/widgets/primary_button.dart';
 import '../../../../core/widgets/custom_text_field.dart';
+import '../../../../core/widgets/app_notification.dart';
 import '../../logic/auth_controller.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
@@ -73,11 +74,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Gagal mendaftar: ${e.toString()}'),
-            backgroundColor: AppColors.statusError,
-          ),
+        AppNotification.showError(
+          context,
+          'Gagal mendaftar: ${e.toString()}',
         );
       }
     } finally {

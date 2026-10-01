@@ -5,6 +5,7 @@ import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/typography.dart';
 import '../../../../core/widgets/confirmation_dialog.dart';
 import '../../../../core/widgets/shimmer_loading.dart';
+import '../../../../core/widgets/app_notification.dart';
 import '../../../booking/logic/multi_vehicle_selection_provider.dart';
 import '../../data/models/vehicle_model.dart';
 import '../../logic/garage_provider.dart';
@@ -39,15 +40,22 @@ class VehicleDetailScreen extends ConsumerWidget {
       if (selected.any((s) => s.id == vehicle.id)) {
         ref.read(selectedVehiclesProvider.notifier).toggleVehicle(vehicle);
       }
-      await ref.read(garageProvider.notifier).deleteVehicle(vehicle);
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${vehicle.modelName} berhasil dihapus dari garasi'),
-            backgroundColor: AppColors.statusSuccess,
-          ),
-        );
-        context.pop();
+      try {
+        await ref.read(garageProvider.notifier).deleteVehicle(vehicle);
+        if (context.mounted) {
+          AppNotification.showSuccess(
+            context,
+            '${vehicle.modelName} berhasil dihapus dari garasi',
+          );
+          context.pop();
+        }
+      } catch (e) {
+        if (context.mounted) {
+          AppNotification.showError(
+            context,
+            'Gagal menghapus kendaraan: $e',
+          );
+        }
       }
     }
   }

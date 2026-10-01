@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/typography.dart';
 import '../../../../core/widgets/primary_button.dart';
+import '../../../../core/widgets/app_notification.dart';
 import '../../../booking/logic/service_configuration_provider.dart';
 import '../../../garage/data/models/vehicle_model.dart';
 import '../../../garage/data/vehicle_repository.dart';
@@ -1067,20 +1068,16 @@ class _WorkshopRatingSectionState
         setState(() {
           _isEditing = false;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Terima kasih! Penilaian bengkel berhasil disimpan.'),
-            backgroundColor: AppColors.statusSuccess,
-          ),
+        AppNotification.showSuccess(
+          context,
+          'Terima kasih! Penilaian bengkel berhasil disimpan.',
         );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Gagal mengirim penilaian: $e'),
-            backgroundColor: AppColors.statusError,
-          ),
+        AppNotification.showError(
+          context,
+          'Gagal mengirim penilaian: $e',
         );
       }
     } finally {

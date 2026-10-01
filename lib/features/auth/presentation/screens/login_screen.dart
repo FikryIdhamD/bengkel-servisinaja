@@ -8,6 +8,7 @@ import '../../../../core/widgets/primary_button.dart';
 import '../../../../core/widgets/custom_text_field.dart';
 import '../../../../core/widgets/segmented_tab_control.dart';
 import '../../../../core/widgets/app_logo.dart';
+import '../../../../core/widgets/app_notification.dart';
 import '../../logic/auth_controller.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -68,10 +69,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         await authRepo.signInWithOtp(phone: phone);
         if (mounted) {
           // TODO: Navigasi ke halaman input OTP
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Kode OTP telah dikirim ke nomor Anda'),
-            ),
+          AppNotification.showSuccess(
+            context,
+            'Kode OTP telah dikirim ke nomor Anda',
           );
         }
       } else {
@@ -107,11 +107,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Gagal masuk: ${e.toString()}'),
-            backgroundColor: AppColors.statusError,
-          ),
+        AppNotification.showError(
+          context,
+          'Gagal masuk: ${e.toString()}',
         );
       }
     } finally {

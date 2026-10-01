@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/typography.dart';
 import '../../../../core/widgets/confirmation_dialog.dart';
+import '../../../../core/widgets/app_notification.dart';
 import '../../../booking/logic/multi_vehicle_selection_provider.dart';
 import '../../data/models/vehicle_model.dart';
 import '../../logic/garage_provider.dart';
@@ -39,20 +40,16 @@ class GarageScreen extends ConsumerWidget {
         }
         await ref.read(garageProvider.notifier).deleteVehicle(vehicle);
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('${vehicle.modelName} berhasil dihapus dari garasi'),
-              backgroundColor: AppColors.statusSuccess,
-            ),
+          AppNotification.showSuccess(
+            context,
+            '${vehicle.modelName} berhasil dihapus dari garasi',
           );
         }
       } catch (e) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Gagal menghapus kendaraan: $e'),
-              backgroundColor: AppColors.statusError,
-            ),
+          AppNotification.showError(
+            context,
+            'Gagal menghapus kendaraan: $e',
           );
         }
       }
@@ -201,39 +198,39 @@ class GarageScreen extends ConsumerWidget {
                                   ],
                                 ),
                               ),
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    tooltip: 'Edit Kendaraan',
-                                    icon: const Icon(
-                                      Icons.edit_outlined,
-                                      color: AppColors.primaryOrange,
-                                      size: 20,
-                                    ),
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) =>
-                                            AddVehicleModalSheet(
-                                          ref: ref,
-                                          vehicleToEdit: v,
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                  IconButton(
-                                    tooltip: 'Hapus Kendaraan',
-                                    icon: const Icon(
-                                      Icons.delete_outline,
-                                      color: AppColors.statusError,
-                                      size: 20,
-                                    ),
-                                    onPressed: () =>
-                                        _confirmDeleteVehicle(context, ref, v),
-                                  ),
-                                ],
-                              ),
+                              // Row(
+                              //   mainAxisSize: MainAxisSize.min,
+                              //   children: [
+                              //     IconButton(
+                              //       tooltip: 'Edit Kendaraan',
+                              //       icon: const Icon(
+                              //         Icons.edit_outlined,
+                              //         color: AppColors.primaryOrange,
+                              //         size: 20,
+                              //       ),
+                              //       onPressed: () {
+                              //         showDialog(
+                              //           context: context,
+                              //           builder: (context) =>
+                              //               AddVehicleModalSheet(
+                              //             ref: ref,
+                              //             vehicleToEdit: v,
+                              //           ),
+                              //         );
+                              //       },
+                              //     ),
+                              //     IconButton(
+                              //       tooltip: 'Hapus Kendaraan',
+                              //       icon: const Icon(
+                              //         Icons.delete_outline,
+                              //         color: AppColors.statusError,
+                              //         size: 20,
+                              //       ),
+                              //       onPressed: () =>
+                              //           _confirmDeleteVehicle(context, ref, v),
+                              //     ),
+                              //   ],
+                              // ),
                             ],
                           ),
                         ),
