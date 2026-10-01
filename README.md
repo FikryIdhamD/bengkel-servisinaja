@@ -1,7 +1,7 @@
 # PitStop by Servisin Aja — Multi-Vehicle Booking Mobile App
 
-[![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?logo=flutter)](https://flutter.dev)
-[![Dart](https://img.shields.io/badge/Dart-3.x-0175C2?logo=dart)](https://dart.dev)
+[![Flutter](https://img.shields.io/badge/Flutter-3.24-02569B?logo=flutter)](https://flutter.dev)
+[![Dart](https://img.shields.io/badge/Dart-3.5-0175C2?logo=dart)](https://dart.dev)
 [![State Management](https://img.shields.io/badge/State_Management-Riverpod-blue)](https://riverpod.dev)
 [![Backend](https://img.shields.io/badge/Backend-Supabase-3ECF8E?logo=supabase)](https://supabase.com)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
