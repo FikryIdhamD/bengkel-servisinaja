@@ -9,12 +9,12 @@ class StickyUnitSwitcher extends StatelessWidget {
   final List<bool> completedStatus;
 
   const StickyUnitSwitcher({
-    Key? key,
+    super.key,
     required this.units,
     required this.selectedIndex,
     required this.onUnitChanged,
     required this.completedStatus,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

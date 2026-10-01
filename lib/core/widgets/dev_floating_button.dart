@@ -4,17 +4,16 @@ import '../constants/colors.dart';
 class DevFloatingButton extends StatelessWidget {
   final VoidCallback onPressed;
 
-  const DevFloatingButton({Key? key, required this.onPressed})
-    : super(key: key);
+  const DevFloatingButton({super.key, required this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
       onPressed: onPressed,
       backgroundColor: AppColors.charcoalDark,
-      child: const Icon(Icons.bug_report, color: AppColors.primaryOrange),
       shape: const CircleBorder(),
       elevation: 6,
+      child: const Icon(Icons.bug_report, color: AppColors.primaryOrange),
     );
   }
 }

@@ -3,58 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/colors.dart';
 import '../../../../core/constants/typography.dart';
-import '../../../../core/widgets/confirmation_dialog.dart';
-import '../../../../core/widgets/app_notification.dart';
-import '../../../booking/logic/multi_vehicle_selection_provider.dart';
-import '../../data/models/vehicle_model.dart';
 import '../../logic/garage_provider.dart';
 import 'widgets/add_vehicle_modal_sheet.dart';
 
 class GarageScreen extends ConsumerWidget {
   const GarageScreen({super.key});
-
-  Future<void> _confirmDeleteVehicle(
-    BuildContext context,
-    WidgetRef ref,
-    Vehicle vehicle,
-  ) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => ConfirmationDialog(
-        title: 'Hapus Kendaraan?',
-        content:
-            'Apakah Anda yakin ingin menghapus ${vehicle.modelName} (${vehicle.plateNumber}) dari garasi? Riwayat tiket servis lama akan tetap tersimpan.',
-        cancelText: 'Batal',
-        confirmText: 'Ya, Hapus',
-        confirmColor: AppColors.statusError,
-        onCancel: () => Navigator.pop(ctx, false),
-        onConfirm: () => Navigator.pop(ctx, true),
-      ),
-    );
-
-    if (confirmed == true) {
-      try {
-        final selected = ref.read(selectedVehiclesProvider);
-        if (selected.any((s) => s.id == vehicle.id)) {
-          ref.read(selectedVehiclesProvider.notifier).toggleVehicle(vehicle);
-        }
-        await ref.read(garageProvider.notifier).deleteVehicle(vehicle);
-        if (context.mounted) {
-          AppNotification.showSuccess(
-            context,
-            '${vehicle.modelName} berhasil dihapus dari garasi',
-          );
-        }
-      } catch (e) {
-        if (context.mounted) {
-          AppNotification.showError(
-            context,
-            'Gagal menghapus kendaraan: $e',
-          );
-        }
-      }
-    }
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -198,39 +151,6 @@ class GarageScreen extends ConsumerWidget {
                                   ],
                                 ),
                               ),
-                              // Row(
-                              //   mainAxisSize: MainAxisSize.min,
-                              //   children: [
-                              //     IconButton(
-                              //       tooltip: 'Edit Kendaraan',
-                              //       icon: const Icon(
-                              //         Icons.edit_outlined,
-                              //         color: AppColors.primaryOrange,
-                              //         size: 20,
-                              //       ),
-                              //       onPressed: () {
-                              //         showDialog(
-                              //           context: context,
-                              //           builder: (context) =>
-                              //               AddVehicleModalSheet(
-                              //             ref: ref,
-                              //             vehicleToEdit: v,
-                              //           ),
-                              //         );
-                              //       },
-                              //     ),
-                              //     IconButton(
-                              //       tooltip: 'Hapus Kendaraan',
-                              //       icon: const Icon(
-                              //         Icons.delete_outline,
-                              //         color: AppColors.statusError,
-                              //         size: 20,
-                              //       ),
-                              //       onPressed: () =>
-                              //           _confirmDeleteVehicle(context, ref, v),
-                              //     ),
-                              //   ],
-                              // ),
                             ],
                           ),
                         ),

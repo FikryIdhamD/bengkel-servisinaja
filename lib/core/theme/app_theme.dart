@@ -9,7 +9,6 @@ class AppTheme {
       colorScheme: ColorScheme.fromSeed(
         seedColor: AppColors.primaryOrange,
         primary: AppColors.primaryOrange,
-        background: AppColors.background,
         surface: AppColors.background,
       ),
       scaffoldBackgroundColor: AppColors.background,

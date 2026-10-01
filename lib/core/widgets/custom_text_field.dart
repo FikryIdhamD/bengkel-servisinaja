@@ -16,7 +16,7 @@ class CustomTextField extends StatefulWidget {
   final List<TextInputFormatter>? inputFormatters;
 
   const CustomTextField({
-    Key? key,
+    super.key,
     required this.placeholder,
     this.isPassword = false,
     this.keyboardType = TextInputType.text,
@@ -26,7 +26,7 @@ class CustomTextField extends StatefulWidget {
     this.controller,
     this.onChanged,
     this.inputFormatters,
-  }) : super(key: key);
+  });
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();

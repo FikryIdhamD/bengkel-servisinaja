@@ -10,13 +10,13 @@ class VehicleSelectableCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const VehicleSelectableCard({
-    Key? key,
+    super.key,
     required this.plateNumber,
     required this.modelName,
     required this.year,
     required this.isSelected,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
